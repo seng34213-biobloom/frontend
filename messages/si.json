@@ -1,0 +1,22 @@
+{
+  "common": {
+    "loading": "පූරණය වෙමින්…",
+    "currency": "රු."
+  },
+  "cart": {
+    "stepIndicator": "පියවර 1 / 3 — කූඩය සමාලෝචනය",
+    "heading": "ඔබේ කූඩය",
+    "empty": "ඔබේ කූඩය හිස් ය.",
+    "browse": "නිෂ්පාදන බලන්න",
+    "quantity": "ප්‍රමාණය",
+    "remove": "ඉවත් කරන්න",
+    "perUnit": "{weight} ග්‍රෑ",
+    "onlyNLeft": "ඉතිරිව {n} පමණයි",
+    "inStock": "තොගයේ ඇත",
+    "items": "අයිතම",
+    "totalWeight": "මුළු බර",
+    "subtotal": "උප එකතුව",
+    "shippingNote": "ගෙවීමේදී නැව්ගත කිරීමේ ගාස්තුව ගණනය කෙරේ.",
+    "continueCheckout": "ගෙවීමට ඉදිරියට යන්න"
+  }
+}
