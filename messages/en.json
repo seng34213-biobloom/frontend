@@ -1,0 +1,22 @@
+{
+  "common": {
+    "loading": "Loading…",
+    "currency": "LKR"
+  },
+  "cart": {
+    "stepIndicator": "Step 1 of 3 — Review Cart",
+    "heading": "Your Cart",
+    "empty": "Your cart is empty.",
+    "browse": "Browse Products",
+    "quantity": "Quantity",
+    "remove": "Remove",
+    "perUnit": "{weight} g",
+    "onlyNLeft": "Only {n} left",
+    "inStock": "In stock",
+    "items": "Items",
+    "totalWeight": "Total weight",
+    "subtotal": "Subtotal",
+    "shippingNote": "Shipping calculated at checkout.",
+    "continueCheckout": "Proceed to Checkout"
+  }
+}
