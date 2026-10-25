@@ -2,8 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { ProductEditor } from '@biobloom/ui';
-import { PageHeader } from '../../../components/PageHeader';
-import { catalogueClient } from '../../../lib/catalogue-client';
+import { PageHeader } from '../../../components/admin/PageHeader';
+import { catalogueClient } from '../../../lib/admin/catalogue-client';
 
 export default function NewProductPage() {
   const router = useRouter();
