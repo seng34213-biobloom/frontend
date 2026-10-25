@@ -42,6 +42,7 @@
   ],
   "exclude": [
     "node_modules",
+    "packages/shared-types",
     "packages/**/__tests__",
     "packages/**/*.test.*",
     "packages/**/vitest.config.ts",
