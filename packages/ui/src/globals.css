@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-page: theme('colors.cream.50');
+    --fg-default: theme('colors.forest.700');
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  html,
+  body {
+    background-color: var(--bg-page);
+    color: var(--fg-default);
+  }
+
+  body {
+    /* Inter optical polish: contextual alternates + stylistic sets. */
+    font-feature-settings:
+      'cv11' 1,
+      'ss01' 1,
+      'calt' 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /*
+   * Display headings. Existing markup uses the `.font-serif` utility for all
+   * headlines; in the reskin that slot is Inter, so we promote those headings
+   * to a heavy, tightly-tracked, balanced display treatment here — no per-page
+   * markup change required. Explicit Tailwind font-weight utilities still win.
+   */
+  .font-serif {
+    font-weight: 800;
+    letter-spacing: theme('letterSpacing.display');
+    line-height: 1.04;
+    text-wrap: balance;
+  }
+
+  /* Tighten the very largest hero headings a touch more. */
+  .font-serif.text-5xl,
+  .font-serif.text-6xl {
+    letter-spacing: theme('letterSpacing.tightest');
+  }
+
+  /* Refined, on-brand focus ring across every interactive element. */
+  :focus-visible {
+    outline: 2px solid theme('colors.brand.500');
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  ::selection {
+    background-color: theme('colors.brand.200');
+    color: theme('colors.forest.700');
+  }
+
+  /* Honour users who prefer reduced motion — disable decorative motion. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /*
+   * Skeleton shimmer for loading states. Purely cosmetic — rendered under the
+   * exact same loading conditions as the text placeholders it replaces.
+   */
+  .skeleton {
+    background-color: theme('colors.cream.100');
+    background-image: linear-gradient(
+      90deg,
+      theme('colors.cream.100') 0%,
+      theme('colors.cream.200') 50%,
+      theme('colors.cream.100') 100%
+    );
+    background-size: 200% 100%;
+    border-radius: theme('borderRadius.lg');
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton {
+      animation: none;
+    }
+  }
+
+  /* Decorative kraft-label panel — artisan product imagery stand-in. */
+  .label-panel {
+    background-image:
+      radial-gradient(
+        120% 90% at 50% 0%,
+        rgba(255, 255, 255, 0.55) 0%,
+        rgba(255, 255, 255, 0) 60%
+      ),
+      linear-gradient(
+        160deg,
+        theme('colors.cream.100') 0%,
+        theme('colors.cream.200') 100%
+      );
+  }
+}

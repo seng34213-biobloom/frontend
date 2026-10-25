@@ -25,6 +25,12 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@biobloom/ui": [
+        "./packages/ui/src/index.ts"
+      ],
+      "@biobloom/ui/*": [
+        "./packages/ui/src/*"
       ]
     }
   },
@@ -35,6 +41,10 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "packages/**/__tests__",
+    "packages/**/*.test.*",
+    "packages/**/vitest.config.ts",
+    "packages/**/test-setup.ts"
   ]
 }
