@@ -1,18 +1,28 @@
 import { cookies } from 'next/headers';
 import { getRequestConfig } from 'next-intl/server';
-import { routing } from './routing';
+import type { AbstractIntlMessages } from 'next-intl';
+import { routing, type AppLocale } from './routing';
+
+export const TIME_ZONE = 'Asia/Colombo';
 
 export default getRequestConfig(async () => {
-    // URLs carry no locale prefix, so the locale comes from the cookie the switcher sets
-    let locale = cookies().get('NEXT_LOCALE')?.value;
+  let locale: AppLocale = routing.defaultLocale;
 
-    // Validate against the supported locales; fall back to the default
-    if (!locale || !routing.locales.includes(locale as 'en' | 'si')) {
-        locale = routing.defaultLocale;
+  try {
+    const cookieStore = cookies();
+    const fromCookie = cookieStore.get('NEXT_LOCALE')?.value;
+    if (fromCookie && (routing.locales as readonly string[]).includes(fromCookie)) {
+      locale = fromCookie as AppLocale;
     }
+  } catch {
+    // Fall back to defaultLocale if cookies() cannot be read (e.g. static generation)
+  }
 
-    return {
-        locale,
-        messages: (await import(`../../messages/${locale}.json`)).default,
-    };
+  const messages = (await import(`../../messages/${locale}.json`)).default as AbstractIntlMessages;
+
+  return {
+    locale,
+    messages,
+    timeZone: TIME_ZONE,
+  };
 });
