@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { AppShell } from '../components/admin/AppShell';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Bio Bloom — Admin Console',
@@ -6,15 +8,17 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-cream-50 font-sans text-forest-700 antialiased">
-        {children}
+      <body className="bg-cream-50 text-forest-700 min-h-screen font-sans antialiased">
+        <a
+          href="#main-content"
+          className="focus:bg-forest-700 focus:text-cream-50 sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:px-4 focus:py-2"
+        >
+          Skip to main content
+        </a>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

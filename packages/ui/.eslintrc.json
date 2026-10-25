@@ -1,0 +1,25 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": { "ecmaVersion": 2022, "sourceType": "module", "ecmaFeatures": { "jsx": true } },
+  "env": { "browser": true, "es2022": true },
+  "settings": { "react": { "version": "18.3" } },
+  "plugins": ["@typescript-eslint", "react-hooks", "jsx-a11y"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended"
+  ],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "jsx-a11y/no-autofocus": "warn",
+    "jsx-a11y/no-noninteractive-tabindex": ["error", { "roles": ["tabpanel", "region"] }]
+  },
+  "overrides": [
+    {
+      "files": ["**/__tests__/**", "**/*.test.tsx", "**/*.test.ts"],
+      "env": { "node": true }
+    }
+  ]
+}

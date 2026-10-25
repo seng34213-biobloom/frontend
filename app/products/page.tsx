@@ -1,160 +1,141 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
+import { PageHeader } from '../components/page-header';
+import { ProductCard } from '../components/product-card';
+import { Pagination } from '../components/pagination';
+import { buttonClass } from '../components/button-styles';
+import { inputClass, labelTextClass } from '../components/form-field';
+import { serverGet } from '../lib/server-api';
+import { KNOWN_CATEGORIES } from '../lib/categories';
+import type { ProductPage } from '../lib/types';
 
 /**
  * Customer-facing product grid (SDS §5.2 + §6.2). Server component so the
- * catalogue is SSR-rendered for SEO. The API call hits the same `/api/products`
- * endpoint Phase 4 exposes; the Next dev server can reach localhost:4000 even
- * though the browser-side calls go through NEXT_PUBLIC_API_BASE_URL.
+ * catalogue is SSR-rendered for SEO. Filters live in the query string, so the
+ * plain GET form works without JavaScript. An unreachable API throws to
+ * `products/error.tsx`.
  */
 
-const API_INTERNAL =
-    process.env.API_INTERNAL_BASE_URL?.replace(/\/$/, '') ??
-    process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, '') ??
-    'http://localhost:4000';
+const PAGE_SIZE = 12;
 
-interface ProductListItem {
-    id: string;
-    slug: string;
-    name: string;
-    description: string;
-    category: string;
-    basePrice: string;
-    unitWeightG: number;
-    seller: { id: string; businessName: string };
-    variants: Array<{
-        id: string;
-        sku: string;
-        name: string;
-        size: string;
-        price: string;
-        unitWeightG: number;
-    }>;
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('products');
+  return { title: t('metaTitle') };
 }
 
-async function fetchProducts(
-    searchParams: Record<string, string | undefined>,
-): Promise<{ items: ProductListItem[]; total: number; error?: string }> {
-    const params = new URLSearchParams();
-    if (searchParams.category) params.set('category', searchParams.category);
-    if (searchParams.search) params.set('search', searchParams.search);
-    if (searchParams.page) params.set('page', searchParams.page);
-    const url = `${API_INTERNAL}/api/products${params.toString() ? `?${params}` : ''}`;
-    try {
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res.ok) return { items: [], total: 0, error: `API ${res.status}` };
-        return (await res.json()) as { items: ProductListItem[]; total: number };
-    } catch (e) {
-        return { items: [], total: 0, error: (e as Error).message };
-    }
-}
-
-function lowestPrice(items: ProductListItem['variants']): string {
-    if (items.length === 0) return '—';
-    return items
-        .map((v) => Number(v.price))
-        .sort((a, b) => a - b)[0]
-        .toFixed(2);
+function single(value: string | string[] | undefined): string | undefined {
+  const v = Array.isArray(value) ? value[0] : value;
+  return v?.trim() || undefined;
 }
 
 export default async function ProductsPage({
-    searchParams,
+  searchParams,
 }: {
-    searchParams: Promise<Record<string, string | undefined>>;
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
-    const resolved = await searchParams;
-    const { items, total, error } = await fetchProducts(resolved);
+  const t = await getTranslations('products');
+  const tCategory = await getTranslations('categories');
+  const category = single(searchParams.category);
+  const search = single(searchParams.search);
+  const page = Math.max(1, Number(single(searchParams.page)) || 1);
 
-    return (
-        <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-10 px-6 py-14">
-            <header className="max-w-2xl space-y-4">
-                <span className="inline-flex items-center gap-2 rounded-full border border-cream-300 bg-cream-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-clay-500">
-                    <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-brand-500" />
-                    Shop
-                </span>
-                <h1 className="font-serif text-4xl text-forest-700 md:text-5xl">
-                    Handcrafted, small batch.
-                </h1>
-                <p className="text-lg leading-relaxed text-forest-500">
-                    Every jar carries its own batch number and expiry date — we sell the
-                    earliest-expiring stock first (FIFO) so what arrives at your door has
-                    the longest shelf life possible.
-                </p>
-            </header>
+  const qs = new URLSearchParams({ page: String(page), pageSize: String(PAGE_SIZE) });
+  if (category) qs.set('category', category);
+  if (search) qs.set('search', search);
+  const data = (await serverGet<ProductPage>(`/api/products?${qs}`)) ?? { items: [], total: 0 };
+  const pageCount = Math.max(1, Math.ceil(data.total / PAGE_SIZE));
+  const filtered = Boolean(category || search);
 
-            {error && (
-                <div className="rounded-2xl border border-danger-300 bg-danger-50 p-5 text-sm text-danger-700">
-                    Couldn&rsquo;t load products: {error}
-                </div>
+  return (
+    <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-14 sm:px-6">
+      <PageHeader eyebrow={t('eyebrow')} title={t('heading')} lead={t('intro')} />
+
+      <form
+        method="get"
+        action="/products"
+        role="search"
+        aria-label={t('filtersLabel')}
+        className="border-cream-200 bg-cream-50 grid gap-4 rounded-3xl border p-5 shadow-sm sm:grid-cols-[1fr_2fr_auto] sm:items-end"
+      >
+        <div>
+          <label htmlFor="filter-category" className={labelTextClass}>
+            {t('category')}
+          </label>
+          <select
+            id="filter-category"
+            name="category"
+            defaultValue={category ?? ''}
+            className={`${inputClass} mt-1.5`}
+          >
+            <option value="">{t('allCategories')}</option>
+            {KNOWN_CATEGORIES.map((c) => (
+              <option key={c} value={c}>
+                {tCategory(c)}
+              </option>
+            ))}
+            {category && !(KNOWN_CATEGORIES as readonly string[]).includes(category) && (
+              <option value={category}>{category}</option>
             )}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="filter-search" className={labelTextClass}>
+            {t('search')}
+          </label>
+          <input
+            id="filter-search"
+            type="search"
+            name="search"
+            defaultValue={search ?? ''}
+            placeholder={t('searchPlaceholder')}
+            maxLength={120}
+            className={`${inputClass} mt-1.5`}
+          />
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button type="submit" className={buttonClass('primary')}>
+            {t('apply')}
+          </button>
+          {filtered && (
+            <Link href="/products" className={buttonClass('ghost')}>
+              {t('clear')}
+            </Link>
+          )}
+        </div>
+      </form>
 
-            {!error && items.length === 0 ? (
-                <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-cream-300 bg-cream-100/50 px-6 py-20 text-center">
-                    <span aria-hidden="true" className="text-4xl">
-                        🌿
-                    </span>
-                    <p className="text-lg text-forest-500">
-                        No products in stock right now. Check back soon.
-                    </p>
-                </div>
-            ) : (
-                <ul className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
-                    {items.map((p, i) => (
-                        <li
-                            key={p.id}
-                            className="group animate-fade-up [animation-fill-mode:both]"
-                            style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
-                        >
-                            <Link
-                                href={`/products/${p.slug}`}
-                                className="flex h-full flex-col overflow-hidden rounded-3xl border border-cream-200 bg-cream-50 shadow-sm transition-all duration-300 ease-soft hover:-translate-y-1 hover:border-cream-300 hover:shadow-lg focus-visible:-translate-y-1 focus-visible:shadow-lg"
-                            >
-                                {/* Artisan-label image stand-in (no photo field in the data model). */}
-                                <div className="label-panel relative flex aspect-[5/4] items-center justify-center overflow-hidden">
-                                    <span
-                                        aria-hidden="true"
-                                        className="font-serif text-[5.5rem] leading-none tracking-tightest text-forest-700/10 transition-transform duration-500 ease-soft group-hover:scale-110"
-                                    >
-                                        {p.name.trim().charAt(0)}
-                                    </span>
-                                    <span className="absolute left-4 top-4 rounded-full bg-cream-50/85 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-widest text-clay-500 backdrop-blur">
-                                        {p.category}
-                                    </span>
-                                </div>
+      <p role="status" className="text-forest-500 text-sm">
+        {t('showing', { count: data.items.length, total: data.total })}
+      </p>
 
-                                <div className="flex flex-1 flex-col gap-2 p-5">
-                                    <h2 className="font-serif text-2xl text-forest-700 transition-colors group-hover:text-brand-700">
-                                        {p.name}
-                                    </h2>
-                                    <p className="line-clamp-2 text-sm leading-relaxed text-forest-500">
-                                        {p.description}
-                                    </p>
-                                    <p className="text-xs text-forest-400">By {p.seller.businessName}</p>
-                                    <div className="mt-auto flex items-center justify-between border-t border-cream-200 pt-4">
-                                        <span className="flex flex-col">
-                                            <span className="text-[0.65rem] font-medium uppercase tracking-widest text-forest-400">
-                                                from
-                                            </span>
-                                            <span className="text-lg font-bold text-forest-700">
-                                                LKR {lowestPrice(p.variants)}
-                                            </span>
-                                        </span>
-                                        <span className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 transition-all duration-200 ease-soft group-hover:gap-2">
-                                            View
-                                            <span aria-hidden="true">→</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            )}
+      {data.items.length === 0 ? (
+        <div className="border-cream-300 bg-cream-100/50 flex flex-col items-center gap-4 rounded-3xl border border-dashed px-6 py-20 text-center">
+          <span aria-hidden="true" className="text-4xl">
+            🌿
+          </span>
+          <p className="text-forest-500 text-lg">{filtered ? t('noMatches') : t('emptyState')}</p>
+        </div>
+      ) : (
+        <ul className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
+          {data.items.map((p, i) => (
+            <li
+              key={p.id}
+              className="animate-fade-up [animation-fill-mode:both]"
+              style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
+            >
+              <ProductCard product={p} />
+            </li>
+          ))}
+        </ul>
+      )}
 
-            {!error && items.length > 0 && (
-                <p className="text-xs text-forest-400">
-                    Showing {items.length} of {total}
-                </p>
-            )}
-        </main>
-    );
+      <Pagination
+        page={page}
+        pageCount={pageCount}
+        basePath="/products"
+        params={{ category, search }}
+      />
+    </div>
+  );
 }
