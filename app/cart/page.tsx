@@ -1,244 +1,172 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Button } from '../components/button';
-import { ApiError, api } from '../lib/api';
-import { useAuth } from '../lib/auth-context';
+import { useCallback, useEffect, useState } from 'react';
+import { Button, Spinner } from '@biobloom/ui';
+import { ButtonLink } from '../components/button-link';
+import { InlineAlert } from '../components/inline-alert';
+import { PageHeader } from '../components/page-header';
+import { api } from '../lib/api';
+import type { CartLine, CartView } from '../lib/types';
+import { useRequireAuth, useSessionExpiryRedirect } from '../lib/use-require-auth';
 
 /**
- * Cart review screen (SDS §6.3 step 1). Lists cart lines with qty controls
- * and a "Proceed to checkout" CTA. The Phase 5 e2e covers the API surface;
- * this view is the customer-facing twin.
+ * Step 1 of 2 (SDS §6.3): review the cart. Quantity changes are checked
+ * against live stock; a 409 is shown inline on the line and the quantity is
+ * kept. The shipping fee is calculated from weight on the next step.
  */
-
-// Opt out of static generation — cart is user-specific and depends on
-// client-side auth/session context that is unavailable at build time.
-export const dynamic = 'force-dynamic';
-
-interface CartLine {
-    id: string;
-    quantity: number;
-    variant: {
-        id: string;
-        sku: string;
-        name: string;
-        size: string;
-        price: string;
-        unitWeightG: number;
-        productSlug: string;
-        productName: string;
-    };
-    available: number;
-    lineSubtotal: string;
-}
-
-interface CartView {
-    items: CartLine[];
-    itemCount: number;
-    subtotal: string;
-    totalWeightG: number;
-}
-
 export default function CartPage() {
-    const t = useTranslations('cart');
-    const tCommon = useTranslations('common');
-    const router = useRouter();
-    const { user, loading: authLoading } = useAuth();
-    const [cart, setCart] = useState<CartView | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [busyItemId, setBusyItemId] = useState<string | null>(null);
+  const t = useTranslations('cart');
+  const { ready } = useRequireAuth();
+  const onAuthError = useSessionExpiryRedirect();
+  const [cart, setCart] = useState<CartView | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [lineErrors, setLineErrors] = useState<Record<string, string>>({});
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [announce, setAnnounce] = useState('');
 
-    const load = useCallback(async () => {
-        try {
-            setError(null);
-            setCart(await api<CartView>('GET', '/api/cart'));
-        } catch (e) {
-            if (e instanceof ApiError && e.status === 401) {
-                router.push('/login?next=/cart');
-                return;
-            }
-            setError((e as Error).message);
-            setCart({ items: [], itemCount: 0, subtotal: '0.00', totalWeightG: 0 });
-        }
-    }, [router]);
-
-    useEffect(() => {
-        if (authLoading) return;
-        if (!user) {
-            router.push('/login?next=/cart');
-            return;
-        }
-        void load();
-    }, [authLoading, user, load, router]);
-
-    async function changeQty(itemId: string, qty: number) {
-        setBusyItemId(itemId);
-        try {
-            const next = await api<CartView>('PATCH', `/api/cart/items/${itemId}`, { quantity: qty });
-            setCart(next);
-        } catch (e) {
-            alert((e as Error).message);
-        } finally {
-            setBusyItemId(null);
-        }
+  const load = useCallback(async () => {
+    try {
+      setCart(await api<CartView>('GET', '/api/cart'));
+      setError(null);
+    } catch (e) {
+      if (!onAuthError(e)) setError((e as Error).message);
     }
+  }, [onAuthError]);
 
-    async function removeItem(itemId: string) {
-        setBusyItemId(itemId);
-        try {
-            const next = await api<CartView>('DELETE', `/api/cart/items/${itemId}`);
-            setCart(next);
-        } catch (e) {
-            alert((e as Error).message);
-        } finally {
-            setBusyItemId(null);
-        }
+  useEffect(() => {
+    if (ready) void load();
+  }, [ready, load]);
+
+  async function update(line: CartLine, quantity: number) {
+    setBusyId(line.id);
+    setLineErrors((prev) => ({ ...prev, [line.id]: '' }));
+    try {
+      const next =
+        quantity <= 0
+          ? await api<CartView>('DELETE', `/api/cart/items/${line.id}`)
+          : await api<CartView>('PATCH', `/api/cart/items/${line.id}`, { quantity });
+      setCart(next);
+      setAnnounce(quantity <= 0 ? t('removed') : t('updated'));
+    } catch (e) {
+      if (!onAuthError(e)) setLineErrors((prev) => ({ ...prev, [line.id]: (e as Error).message }));
+    } finally {
+      setBusyId(null);
     }
+  }
 
+  if (!ready || (!cart && !error)) {
     return (
-        <section className="mx-auto flex min-h-screen max-w-4xl flex-col gap-8 px-6 py-12">
-            <header className="space-y-3">
-                <span className="inline-flex items-center gap-2 rounded-full border border-cream-300 bg-cream-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-clay-500">
-                    <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-brand-500" />
-                    {t('stepIndicator')}
-                </span>
-                <h1 className="font-serif text-4xl text-forest-700 md:text-5xl">{t('heading')}</h1>
-            </header>
-
-            {error && (
-                <div className="rounded-2xl border border-danger-300 bg-danger-50 p-4 text-sm text-danger-700">
-                    {error}
-                </div>
-            )}
-
-            {cart === null ? (
-                <div className="space-y-4" aria-busy="true" aria-label={tCommon('loading')}>
-                    <div className="overflow-hidden rounded-2xl border border-cream-200 bg-cream-50">
-                        {Array.from({ length: 3 }).map((_, i) => (
-                            <div
-                                key={i}
-                                className="flex items-center justify-between gap-4 border-b border-cream-200 p-5 last:border-b-0"
-                            >
-                                <div className="flex items-center gap-4">
-                                    <div className="skeleton h-16 w-16 rounded-2xl" />
-                                    <div className="space-y-2">
-                                        <div className="skeleton h-5 w-40" />
-                                        <div className="skeleton h-3 w-28" />
-                                    </div>
-                                </div>
-                                <div className="skeleton h-9 w-20 rounded-xl" />
-                            </div>
-                        ))}
-                    </div>
-                    <div className="skeleton h-32 rounded-2xl" />
-                </div>
-            ) : cart.items.length === 0 ? (
-                <div className="flex flex-col items-center gap-5 rounded-3xl border border-dashed border-cream-300 bg-cream-100/50 px-6 py-20 text-center">
-                    <span aria-hidden="true" className="text-4xl">
-                        🧺
-                    </span>
-                    <p className="text-lg text-forest-500">{t('empty')}</p>
-                    <Button>
-                        <Link href="/products">{t('browse')}</Link>
-                    </Button>
-                </div>
-            ) : (
-                <>
-                    <ul className="divide-y divide-cream-200 overflow-hidden rounded-2xl border border-cream-200 bg-cream-50 shadow-sm">
-                        {cart.items.map((line) => (
-                            <li
-                                key={line.id}
-                                className={`flex flex-col gap-4 p-5 transition-opacity duration-200 md:flex-row md:items-center md:justify-between ${busyItemId === line.id ? 'opacity-60' : ''
-                                    }`}
-                            >
-                                <div className="flex items-center gap-4">
-                                    {/* Artisan-label thumbnail (no photo field in the data model). */}
-                                    <div
-                                        aria-hidden="true"
-                                        className="label-panel flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-cream-200"
-                                    >
-                                        <span className="font-serif text-2xl tracking-tightest text-forest-700/25">
-                                            {line.variant.productName.trim().charAt(0)}
-                                        </span>
-                                    </div>
-                                    <div className="space-y-1">
-                                        <Link
-                                            href={`/products/${line.variant.productSlug}`}
-                                            className="font-serif text-xl text-forest-700 transition-colors hover:text-brand-700"
-                                        >
-                                            {line.variant.productName}
-                                        </Link>
-                                        <p className="text-sm text-forest-500">
-                                            {line.variant.size} · {tCommon('currency')} {line.variant.price} ·{' '}
-                                            {t('perUnit', { weight: line.variant.unitWeightG })}
-                                        </p>
-                                        <p className="text-xs text-forest-400">
-                                            {line.available < 10
-                                                ? t('onlyNLeft', { n: line.available })
-                                                : t('inStock')}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3 md:gap-4">
-                                    <label className="flex items-center gap-2 text-sm">
-                                        <span className="sr-only">{t('quantity')}</span>
-                                        <input
-                                            type="number"
-                                            min={0}
-                                            max={line.available}
-                                            value={line.quantity}
-                                            disabled={busyItemId === line.id}
-                                            onChange={(e) =>
-                                                changeQty(line.id, Math.max(0, Number(e.target.value) || 0))
-                                            }
-                                            className="w-20 rounded-xl border border-cream-300 bg-cream-50 px-3 py-2 text-forest-700 outline-none transition-colors focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
-                                        />
-                                    </label>
-                                    <span className="w-28 text-right font-bold text-forest-700">
-                                        {tCommon('currency')} {line.lineSubtotal}
-                                    </span>
-                                    <button
-                                        type="button"
-                                        onClick={() => removeItem(line.id)}
-                                        disabled={busyItemId === line.id}
-                                        className="rounded-full p-2 text-sm font-medium text-forest-400 transition-colors hover:bg-danger-50 hover:text-danger-700"
-                                        aria-label={t('remove')}
-                                    >
-                                        {t('remove')}
-                                    </button>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-
-                    <section className="space-y-3 rounded-2xl border border-cream-200 bg-cream-50 p-6 shadow-sm">
-                        <div className="flex items-center justify-between text-sm">
-                            <span className="text-forest-500">{t('items')}</span>
-                            <span className="font-semibold text-forest-700">{cart.itemCount}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm">
-                            <span className="text-forest-500">{t('totalWeight')}</span>
-                            <span className="font-semibold text-forest-700">{cart.totalWeightG} g</span>
-                        </div>
-                        <div className="flex items-center justify-between border-t border-cream-200 pt-3 text-lg">
-                            <span className="font-medium text-forest-600">{t('subtotal')}</span>
-                            <span className="text-2xl font-bold tracking-tight text-forest-700">
-                                {tCommon('currency')} {cart.subtotal}
-                            </span>
-                        </div>
-                        <p className="pt-1 text-xs text-forest-400">{t('shippingNote')}</p>
-                    </section>
-
-                    <div className="flex justify-end">
-                        <Button className="px-6 py-3 text-base">
-                            <Link href="/checkout">{t('continueCheckout')}</Link>
-                        </Button>
-                    </div>
-                </>
-            )}
-        </section>
+      <div className="mx-auto max-w-4xl px-6 py-10">
+        <Spinner label={t('loading')} />
+      </div>
     );
+  }
+
+  return (
+    <div className="mx-auto max-w-4xl px-6 py-10">
+      <PageHeader eyebrow={t('stepIndicator')} title={t('heading')} />
+      <p className="sr-only" aria-live="polite">
+        {announce}
+      </p>
+      {error ? <InlineAlert>{error}</InlineAlert> : null}
+      {cart && cart.items.length === 0 ? (
+        <div className="border-cream-200 mt-8 rounded-3xl border bg-white p-8 text-center">
+          <p className="text-lg">{t('empty')}</p>
+          <ButtonLink href="/products" className="mt-4">
+            {t('browse')}
+          </ButtonLink>
+        </div>
+      ) : null}
+      {cart && cart.items.length > 0 ? (
+        <>
+          <ul className="divide-cream-200 border-cream-200 mt-6 divide-y rounded-3xl border bg-white">
+            {cart.items.map((line) => {
+              const name = line.variant
+                ? `${line.variant.productName} — ${line.variant.name} (${line.variant.size})`
+                : (line.bundle?.name ?? '');
+              const href = line.variant
+                ? `/products/${line.variant.productSlug}`
+                : `/bundles/${line.bundle?.slug}`;
+              const unit = line.variant?.price ?? line.bundle?.price ?? '0';
+              const short = line.available < line.quantity;
+              return (
+                <li
+                  key={line.id}
+                  className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <Link href={href} className="text-forest-800 font-semibold hover:underline">
+                      {name}
+                    </Link>
+                    <p className="text-forest-600 text-sm">{t('perUnit', { price: unit })}</p>
+                    <p className="text-sm" aria-live="polite">
+                      {short ? (
+                        <span className="text-danger-700 font-medium">
+                          {t('onlyNLeft', { count: line.available })}
+                        </span>
+                      ) : (
+                        <span className="text-forest-600">{t('inStock')}</span>
+                      )}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <label className="text-forest-500 text-xs font-medium uppercase tracking-widest">
+                      {t('quantity')}
+                      <input
+                        type="number"
+                        min={0}
+                        max={99}
+                        defaultValue={line.quantity}
+                        key={`${line.id}-${line.quantity}`}
+                        disabled={busyId === line.id}
+                        aria-describedby={lineErrors[line.id] ? `err-${line.id}` : undefined}
+                        aria-invalid={Boolean(lineErrors[line.id]) || undefined}
+                        onBlur={(e) => {
+                          const q = Math.max(0, Math.min(99, Number(e.target.value) || 0));
+                          if (q !== line.quantity) void update(line, q);
+                        }}
+                        className="border-forest-300 text-forest-700 ml-2 w-20 rounded-lg border px-2 py-1 text-base"
+                      />
+                    </label>
+                    <span className="w-28 text-right font-semibold">LKR {line.lineSubtotal}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={busyId === line.id}
+                      onClick={() => void update(line, 0)}
+                    >
+                      {t('remove')}
+                    </Button>
+                  </div>
+                  {lineErrors[line.id] ? (
+                    <p
+                      id={`err-${line.id}`}
+                      role="alert"
+                      className="text-danger-700 text-sm font-medium sm:basis-full"
+                    >
+                      {lineErrors[line.id]}
+                    </p>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+          <dl className="ml-auto mt-6 grid max-w-sm grid-cols-2 gap-2 text-sm">
+            <dt>{t('items')}</dt>
+            <dd className="text-right">{cart.itemCount}</dd>
+            <dt>{t('totalWeight')}</dt>
+            <dd className="text-right">{cart.totalWeightG} g</dd>
+            <dt className="font-semibold">{t('subtotal')}</dt>
+            <dd className="text-right font-semibold">LKR {cart.subtotal}</dd>
+          </dl>
+          <p className="text-forest-600 mt-2 text-right text-sm">{t('shippingNote')}</p>
+          <div className="mt-6 flex justify-end">
+            <ButtonLink href="/checkout">{t('continueCheckout')}</ButtonLink>
+          </div>
+        </>
+      ) : null}
+    </div>
+  );
 }
