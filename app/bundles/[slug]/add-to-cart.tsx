@@ -4,11 +4,11 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@biobloom/ui';
-import { InlineAlert } from '../../../components/inline-alert';
-import { StockIndicator } from '../../../components/stock-indicator';
-import { api, isApiError } from '../../../lib/api';
-import { useAuth } from '../../../lib/auth-context';
-import { loginHref } from '../../../lib/navigation';
+import { InlineAlert } from '../../components/inline-alert';
+import { StockIndicator } from '../../components/stock-indicator';
+import { api, isApiError } from '../../lib/api';
+import { useAuth } from '../../lib/auth-context';
+import { loginHref } from '../../lib/navigation';
 
 export function AddBundleToCart({
   bundleId,

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { WithIntl } from '../../../components/test-intl';
+import { WithIntl } from '../../components/test-intl';
 import { VariantPanel } from './variant-panel';
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn() }) }));

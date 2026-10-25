@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
 import { Button } from '@biobloom/ui';
-import { InlineAlert } from '../../../components/inline-alert';
-import { StarRating } from '../../../components/star-rating';
-import { TextAreaField } from '../../../components/form-field';
-import { api, isApiError } from '../../../lib/api';
-import { useAuth } from '../../../lib/auth-context';
-import { currentPath, loginHref } from '../../../lib/navigation';
-import type { Review } from '../../../lib/types';
+import { InlineAlert } from '../../components/inline-alert';
+import { StarRating } from '../../components/star-rating';
+import { TextAreaField } from '../../components/form-field';
+import { api, isApiError } from '../../lib/api';
+import { useAuth } from '../../lib/auth-context';
+import { currentPath, loginHref } from '../../lib/navigation';
+import type { Review } from '../../lib/types';
 
 /**
  * Customer Reviews tab (SDS §6.2, DDP-#27). Only customers with a delivered

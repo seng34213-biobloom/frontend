@@ -4,12 +4,12 @@ import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { Button, Spinner } from '@biobloom/ui';
-import { InlineAlert } from '../../../components/inline-alert';
-import { PageHeader } from '../../../components/page-header';
-import { api } from '../../../lib/api';
-import { formatOrderNumber } from '../../../lib/format';
-import type { OrderDetail } from '../../../lib/types';
-import { useRequireAuth } from '../../../lib/use-require-auth';
+import { InlineAlert } from '../../components/inline-alert';
+import { PageHeader } from '../../components/page-header';
+import { api } from '../../lib/api';
+import { formatOrderNumber } from '../../lib/format';
+import type { OrderDetail } from '../../lib/types';
+import { useRequireAuth } from '../../lib/use-require-auth';
 
 /**
  * Stand-in for the gateway's hosted payment page when the API runs with

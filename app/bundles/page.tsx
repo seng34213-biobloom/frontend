@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { BundleCard } from '../../components/bundle-card';
-import { PageHeader } from '../../components/page-header';
-import { bundleList } from '../../lib/bundles';
-import { serverGet } from '../../lib/server-api';
-import type { Bundle } from '../../lib/types';
+import { BundleCard } from '../components/bundle-card';
+import { PageHeader } from '../components/page-header';
+import { bundleList } from '../lib/bundles';
+import { serverGet } from '../lib/server-api';
+import type { Bundle } from '../lib/types';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('bundles');

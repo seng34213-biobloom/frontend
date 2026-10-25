@@ -3,12 +3,12 @@
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Button, Spinner } from '@biobloom/ui';
-import { AddressForm } from '../../../components/address-form';
-import { InlineAlert } from '../../../components/inline-alert';
-import { PageHeader } from '../../../components/page-header';
+import { AddressForm } from '../../components/address-form';
+import { InlineAlert } from '../../components/inline-alert';
+import { PageHeader } from '../../components/page-header';
 import { api } from '../../lib/api';
-import type { Address } from '../../../lib/types';
-import { useRequireAuth, useSessionExpiryRedirect } from '../../../lib/use-require-auth';
+import type { Address } from '../../lib/types';
+import { useRequireAuth, useSessionExpiryRedirect } from '../../lib/use-require-auth';
 
 export default function AddressesPage() {
   const t = useTranslations('address');

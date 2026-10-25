@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import { bundleAvailability, bundleComponents } from '../../../lib/bundles';
-import { serverGet } from '../../../lib/server-api';
-import type { Bundle } from '../../../lib/types';
+import { bundleAvailability, bundleComponents } from '../../lib/bundles';
+import { serverGet } from '../../lib/server-api';
+import type { Bundle } from '../../lib/types';
 import { AddBundleToCart } from './add-to-cart';
 
 export default async function BundlePage({ params }: { params: Promise<{ slug: string }> }) {

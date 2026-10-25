@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Spinner } from '@biobloom/ui';
-import { ButtonLink } from '../../../components/button-link';
-import { InlineAlert } from '../../../components/inline-alert';
-import { PageHeader } from '../../../components/page-header';
-import { api } from '../../../lib/api';
-import { formatOrderNumber } from '../../../lib/format';
-import type { OrderSummary } from '../../../lib/types';
-import { useRequireAuth, useSessionExpiryRedirect } from '../../../lib/use-require-auth';
+import { ButtonLink } from '../../components/button-link';
+import { InlineAlert } from '../../components/inline-alert';
+import { PageHeader } from '../../components/page-header';
+import { api } from '../../lib/api';
+import { formatOrderNumber } from '../../lib/format';
+import type { OrderSummary } from '../../lib/types';
+import { useRequireAuth, useSessionExpiryRedirect } from '../../lib/use-require-auth';
 
 /** Order history (SDS §6.7, DDP-#32). */
 export default function OrdersPage() {

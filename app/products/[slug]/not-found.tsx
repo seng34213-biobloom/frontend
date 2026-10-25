@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { ButtonLink } from '../../../components/button-link';
+import { ButtonLink } from '../../components/button-link';
 
 export default async function ProductNotFound() {
   const t = await getTranslations('errors');

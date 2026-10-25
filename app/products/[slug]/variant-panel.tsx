@@ -4,13 +4,13 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { Button } from '@biobloom/ui';
-import { InlineAlert } from '../../../components/inline-alert';
-import { StockIndicator } from '../../../components/stock-indicator';
-import { api, isApiError } from '../../../lib/api';
-import { useAuth } from '../../../lib/auth-context';
-import { discountCents, fromCents, toCents } from '../../../lib/money';
-import { loginHref } from '../../../lib/navigation';
-import type { ProductVariant } from '../../../lib/types';
+import { InlineAlert } from '../../components/inline-alert';
+import { StockIndicator } from '../../components/stock-indicator';
+import { api, isApiError } from '../../lib/api';
+import { useAuth } from '../../lib/auth-context';
+import { discountCents, fromCents, toCents } from '../../lib/money';
+import { loginHref } from '../../lib/navigation';
+import type { ProductVariant } from '../../lib/types';
 
 /** SDS §6.4 — Subscribe & Save locks a 10% discount at sign-up; the API stores and returns the rate. */
 export const SUBSCRIBE_DISCOUNT_RATE = '0.10';

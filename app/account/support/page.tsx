@@ -3,12 +3,12 @@
 import { useTranslations } from 'next-intl';
 import { useEffect, useState, type FormEvent } from 'react';
 import { Button, Spinner } from '@biobloom/ui';
-import { TextAreaField, TextField } from '../../../components/form-field';
-import { InlineAlert } from '../../../components/inline-alert';
-import { PageHeader } from '../../../components/page-header';
-import { api } from '../../../lib/api';
-import type { SupportTicket } from '../../../lib/types';
-import { useRequireAuth, useSessionExpiryRedirect } from '../../../lib/use-require-auth';
+import { TextAreaField, TextField } from '../../components/form-field';
+import { InlineAlert } from '../../components/inline-alert';
+import { PageHeader } from '../../components/page-header';
+import { api } from '../../lib/api';
+import type { SupportTicket } from '../../lib/types';
+import { useRequireAuth, useSessionExpiryRedirect } from '../../lib/use-require-auth';
 
 /** Customer support tickets (DDP-#27): open, follow and reopen resolved tickets. */
 export default function SupportPage() {

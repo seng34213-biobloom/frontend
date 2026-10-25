@@ -2,8 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { ProductImage } from '../../../components/product-image';
-import type { ProductImage as ProductImageData } from '../../../lib/types';
+import { ProductImage } from '../../components/product-image';
+import type { ProductImage as ProductImageData } from '../../lib/types';
 
 /**
  * Main product image with a thumbnail strip (SDS §6.2). Falls back to the
