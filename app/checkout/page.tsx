@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { Button } from '../components/button';
 import { ApiError, api } from '../lib/api';
 import { useAuth } from '../lib/auth-context';
@@ -71,7 +71,16 @@ const emptyAddressForm = {
 
 const SUBSCRIBE_DISCOUNT_RATE = 0.1; // 10% — matches API DEFAULT_DISCOUNT_RATE
 
+// useSearchParams() needs a Suspense boundary when the page is prerendered
 export default function CheckoutPage() {
+  return (
+    <Suspense>
+      <CheckoutContent />
+    </Suspense>
+  );
+}
+
+function CheckoutContent() {
   const router = useRouter();
   const params = useSearchParams();
   const { user, loading: authLoading } = useAuth();
