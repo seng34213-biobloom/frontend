@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { AuthProvider } from "./lib/auth-context";
@@ -16,7 +17,7 @@ export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
-}>) {
+}) {
   const messages = await getMessages();
 
   return (
