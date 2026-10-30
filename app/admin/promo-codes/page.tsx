@@ -161,7 +161,7 @@ export default function PromoCodesPage() {
       ) : null}
 
       <form onSubmit={create} className="mt-8 grid max-w-3xl gap-3 sm:grid-cols-3" noValidate>
-        <h2 className="text-lg font-semibold sm:col-span-3">New promo code</h2>
+        <h2 className="font-serif text-xl sm:col-span-3">New promo code</h2>
         <FormField label="Code" required hint="3–32 letters, digits, - or _">
           <Input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} />
         </FormField>

@@ -19,12 +19,12 @@ export function AccessDenied({
   return (
     <section
       aria-labelledby="access-denied-title"
-      className="border-danger-300 bg-danger-50 mx-auto max-w-lg space-y-4 rounded-2xl border p-6"
+      className="bg-blush mx-auto max-w-lg space-y-4 border border-black p-7"
     >
-      <h1 id="access-denied-title" className="text-danger-700 font-serif text-2xl">
+      <h1 id="access-denied-title" className="font-serif text-2xl">
         Access denied
       </h1>
-      <p className="text-danger-700 text-sm">{message}</p>
+      <p className="text-sm">{message}</p>
       {email ? (
         <p className="text-forest-600 text-sm">
           Signed in as <span className="font-semibold">{email}</span>.

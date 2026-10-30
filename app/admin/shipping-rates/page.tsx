@@ -154,7 +154,7 @@ export default function ShippingRatesPage() {
 
       {editing ? (
         <form
-          className="border-cream-300 mt-6 grid max-w-3xl items-end gap-3 rounded-xl border bg-white p-4 sm:grid-cols-5"
+          className="mt-6 grid max-w-3xl items-end gap-3 border border-black p-4 sm:grid-cols-5"
           onSubmit={(e) => {
             e.preventDefault();
             void save();

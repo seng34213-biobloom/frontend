@@ -29,10 +29,10 @@ interface BatchRow {
 }
 
 const STATUS_BADGE: Record<BatchStatus, string> = {
-  ACTIVE: 'bg-brand-100 text-brand-700',
-  EXPIRING_SOON: 'bg-amber-100 text-amber-700',
-  EXPIRED: 'bg-danger-50 text-danger-700',
-  DEPLETED: 'bg-cream-200 text-forest-500',
+  ACTIVE: 'bg-leaf text-black',
+  EXPIRING_SOON: 'bg-sun text-black',
+  EXPIRED: 'bg-blush text-black',
+  DEPLETED: 'bg-cream-50 text-black',
 };
 
 function readCookie(name: string): string | null {
@@ -136,7 +136,7 @@ export default function BatchesPage() {
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-8 px-6 py-12">
       <header className="space-y-2">
-        <span className="rounded-full bg-clay-100 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-clay-500">
+        <span className="bg-tangerine border border-black px-2 py-0.5 text-xs font-semibold uppercase tracking-widest text-clay-500">
           Batch management
         </span>
         <h1 className="font-serif text-4xl text-forest-700">Product batches</h1>
@@ -146,7 +146,7 @@ export default function BatchesPage() {
       </header>
 
       {error && (
-        <div className="rounded-lg border border-danger-300 bg-danger-50 p-4 text-sm text-danger-700">
+        <div className="border border-danger-300 bg-danger-50 p-4 text-sm text-danger-700">
           {error}
         </div>
       )}
@@ -156,9 +156,9 @@ export default function BatchesPage() {
       ) : rows.length === 0 ? (
         <p className="text-forest-500">No batches yet — create the first one below.</p>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-cream-200 bg-cream-50">
+        <div className="overflow-hidden border border-black bg-cream-50">
           <table className="w-full text-sm">
-            <thead className="bg-cream-100 text-left text-xs uppercase tracking-widest text-forest-500">
+            <thead className="caps bg-black text-left text-xs text-white">
               <tr>
                 <th className="px-4 py-3">Batch</th>
                 <th className="px-4 py-3">Variant</th>
@@ -168,7 +168,7 @@ export default function BatchesPage() {
                 <th className="px-4 py-3">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-cream-200">
+            <tbody className="divide-y divide-black">
               {rows.map((b) => (
                 <tr key={b.id}>
                   <td className="px-4 py-3 font-mono text-xs">{b.batchNumber}</td>
@@ -184,7 +184,7 @@ export default function BatchesPage() {
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className={`rounded-full px-2 py-1 text-xs font-semibold ${STATUS_BADGE[b.status]}`}
+                      className={`caps border border-black px-2 py-0.5 text-xs font-semibold ${STATUS_BADGE[b.status]}`}
                     >
                       {b.status.replace('_', ' ')}
                     </span>
@@ -196,7 +196,7 @@ export default function BatchesPage() {
         </div>
       )}
 
-      <section className="space-y-4 rounded-xl border border-cream-200 bg-white p-6 shadow-sm">
+      <section className="space-y-4 border border-black p-6">
         <h2 className="font-serif text-2xl text-forest-700">Add a batch</h2>
         <form action={submitNewBatch} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="space-y-1">
@@ -207,7 +207,7 @@ export default function BatchesPage() {
               <select
                 name="variantId"
                 required
-                className="block w-full rounded-lg border border-cream-300 bg-white px-3 py-2"
+                className="block w-full border border-black bg-white px-3 py-2"
               >
                 {variants.map((v) => (
                   <option key={v.id} value={v.id}>
@@ -220,7 +220,7 @@ export default function BatchesPage() {
                 name="variantId"
                 placeholder="Variant UUID"
                 required
-                className="block w-full rounded-lg border border-cream-300 bg-white px-3 py-2"
+                className="block w-full border border-black bg-white px-3 py-2"
               />
             )}
           </label>
@@ -265,7 +265,7 @@ function Field(props: {
         placeholder={props.placeholder}
         required={props.required}
         min={props.min}
-        className="block w-full rounded-lg border border-cream-300 bg-white px-3 py-2"
+        className="block w-full border border-black bg-white px-3 py-2"
       />
     </label>
   );

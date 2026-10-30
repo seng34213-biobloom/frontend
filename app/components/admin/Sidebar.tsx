@@ -35,13 +35,11 @@ export function Sidebar({
   const items = navForRole(role);
 
   return (
-    <aside className="border-cream-300 bg-cream-100 border-b md:sticky md:top-0 md:h-screen md:w-64 md:shrink-0 md:overflow-y-auto md:border-b-0 md:border-r">
-      <div className="flex items-center justify-between gap-3 px-4 py-4 md:block md:px-5 md:py-6">
+    <aside className="bg-cream-50 border-b border-black md:sticky md:top-0 md:h-screen md:w-72 md:shrink-0 md:overflow-y-auto md:border-b-0 md:border-r">
+      <div className="flex items-center justify-between gap-3 border-black px-5 py-4 md:block md:border-b md:py-5">
         <div>
-          <p className="text-forest-700 font-serif text-xl">Bio Bloom</p>
-          <p className="text-clay-500 text-xs font-semibold uppercase tracking-widest">
-            Admin console
-          </p>
+          <p className="font-logo text-[2.25rem] uppercase">Bio Bloom</p>
+          <p className="caps mt-1 text-xs font-medium">Admin console</p>
         </div>
         <Button
           variant="secondary"
@@ -55,21 +53,24 @@ export function Sidebar({
         </Button>
       </div>
 
-      <div id="console-nav" className={`${open ? 'block' : 'hidden'} px-3 pb-6 md:block`}>
+      <div
+        id="console-nav"
+        className={`${open ? 'block' : 'hidden'} border-t border-black md:block md:border-t-0`}
+      >
         <nav aria-label="Console">
           {NAV_GROUPS.map((group) => {
             const groupItems = items.filter((i) => i.group === group);
             if (groupItems.length === 0) return null;
             const headingId = `nav-group-${group.toLowerCase()}`;
             return (
-              <div key={group} className="mb-4">
+              <div key={group} className="border-b border-black">
                 <p
                   id={headingId}
-                  className="text-forest-500 px-2 pb-1 text-xs font-semibold uppercase tracking-widest"
+                  className="bg-sky caps border-b border-black px-5 py-1 text-xs font-medium"
                 >
                   {group}
                 </p>
-                <ul aria-labelledby={headingId} className="space-y-0.5">
+                <ul aria-labelledby={headingId} className="divide-y divide-black">
                   {groupItems.map((item) => {
                     const active = isActive(pathname, item.href);
                     const count = item.badge ? badges[item.badge] : undefined;
@@ -79,21 +80,13 @@ export function Sidebar({
                           href={item.href}
                           aria-current={active ? 'page' : undefined}
                           onClick={() => setOpen(false)}
-                          className={`flex items-center justify-between gap-2 rounded-lg px-2 py-2 text-sm font-medium ${
-                            active
-                              ? 'bg-brand-600 text-cream-50'
-                              : 'text-forest-700 hover:bg-cream-200'
+                          className={`caps flex items-center justify-between gap-2 px-5 py-2.5 text-xs font-medium ${
+                            active ? 'bg-black text-white' : 'hover:bg-sun text-black'
                           }`}
                         >
                           <span>{item.label}</span>
                           {item.badge && count ? (
-                            <span
-                              className={`min-w-[1.5rem] rounded-full px-1.5 text-center text-xs font-bold ${
-                                active
-                                  ? 'bg-cream-50 text-brand-700'
-                                  : 'bg-danger-700 text-cream-50'
-                              }`}
-                            >
+                            <span className="bg-blush min-w-[1.5rem] border border-black px-1.5 text-center text-xs font-semibold text-black">
                               {count}
                               <span className="sr-only"> {BADGE_SUFFIX[item.badge]}</span>
                             </span>
@@ -108,7 +101,7 @@ export function Sidebar({
           })}
         </nav>
 
-        <div className="border-cream-300 mt-6 space-y-2 border-t px-2 pt-4">
+        <div className="space-y-2 p-5">
           <p className="text-forest-600 break-all text-xs">
             <span className="text-forest-700 block font-semibold">{email}</span>
             {humanize(role)}

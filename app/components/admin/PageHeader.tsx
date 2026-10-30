@@ -22,15 +22,11 @@ export function PageHeader({
   }, [title]);
 
   return (
-    <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <header className="flex flex-col gap-4 border-b border-black pb-5 sm:flex-row sm:items-end sm:justify-between">
       <div className="space-y-1">
-        {eyebrow ? (
-          <p className="text-clay-500 text-xs font-semibold uppercase tracking-widest">{eyebrow}</p>
-        ) : null}
-        <h1 className="text-forest-700 font-serif text-3xl">{title}</h1>
-        {description ? (
-          <div className="text-forest-500 max-w-2xl text-sm">{description}</div>
-        ) : null}
+        {eyebrow ? <p className="caps text-xs font-medium">{eyebrow}</p> : null}
+        <h1 className="font-serif text-3xl">{title}</h1>
+        {description ? <div className="max-w-2xl text-sm">{description}</div> : null}
       </div>
       {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
     </header>
