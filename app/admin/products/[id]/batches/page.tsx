@@ -15,7 +15,7 @@ export default function BatchesPage() {
         eyebrow="Products"
         title="Batch management"
         actions={
-          <Link href={`/products/${id}`} className="underline">
+          <Link href={`/admin/products/${id}`} className="underline">
             Edit product
           </Link>
         }

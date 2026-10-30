@@ -114,7 +114,7 @@ export default function OrdersPage() {
                 orders.data.items.map((o) => (
                   <tr key={o.id}>
                     <Td>
-                      <Link className="font-semibold underline" href={`/orders/${o.id}`}>
+                      <Link className="font-semibold underline" href={`/admin/orders/${o.id}`}>
                         {fmtOrderNumber(o.orderNumber, o.id)}
                       </Link>
                     </Td>

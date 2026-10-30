@@ -13,8 +13,8 @@ export default function NewProductPage() {
       <ProductEditor
         client={catalogueClient}
         canPickSeller
-        basePath="/products"
-        onCreated={(id) => router.replace(`/products/${id}`)}
+        basePath="/admin/products"
+        onCreated={(id) => router.replace(`/admin/products/${id}`)}
       />
     </>
   );

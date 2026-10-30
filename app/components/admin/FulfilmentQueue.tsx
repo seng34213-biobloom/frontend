@@ -85,7 +85,7 @@ export function FulfilmentQueue({ headingLevel = 2 }: { headingLevel?: 2 | 3 }) 
                 <tr key={o.id}>
                   <Td>
                     <Link
-                      href={`/orders/${o.id}`}
+                      href={`/admin/orders/${o.id}`}
                       className="text-brand-700 font-semibold underline"
                     >
                       {fmtOrderNumber(o.orderNumber, o.id)}
@@ -165,7 +165,7 @@ export function FulfilmentQueue({ headingLevel = 2 }: { headingLevel?: 2 | 3 }) 
                   <tr key={o.id}>
                     <Td>
                       <Link
-                        href={`/orders/${o.id}`}
+                        href={`/admin/orders/${o.id}`}
                         className="text-brand-700 font-semibold underline"
                       >
                         {fmtOrderNumber(o.orderNumber, o.id)}

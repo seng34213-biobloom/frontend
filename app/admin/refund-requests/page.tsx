@@ -107,7 +107,7 @@ export default function RefundRequestsPage() {
                 return (
                   <tr key={r.id}>
                     <Td>
-                      <Link href={`/orders/${r.order.id}`} className="underline">
+                      <Link href={`/admin/orders/${r.order.id}`} className="underline">
                         {fmtOrderNumber(r.order.orderNumber, r.order.id)}
                       </Link>
                     </Td>
