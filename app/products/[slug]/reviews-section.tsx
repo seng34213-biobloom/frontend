@@ -13,11 +13,20 @@ import { currentPath, loginHref } from '../../lib/navigation';
 import type { Review } from '../../lib/types';
 
 /**
- * Customer Reviews tab (SDS §6.2, DDP-#27). Only customers with a delivered
+ * Customer Reviews band (SDS §6.2, DDP-#27). Only customers with a delivered
  * order for the product can review; reviews appear after moderation.
  */
-export function ReviewsSection({ productId, initial }: { productId: string; initial: Review[] }) {
+export function ReviewsSection({
+  productId,
+  initial,
+  count,
+}: {
+  productId: string;
+  initial: Review[];
+  count: number;
+}) {
   const t = useTranslations('reviews');
+  const tabs = useTranslations('pdp.tabs');
   const { user } = useAuth();
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
@@ -45,21 +54,22 @@ export function ReviewsSection({ productId, initial }: { productId: string; init
   }
 
   return (
-    <div className="max-w-3xl space-y-6">
-      {initial.length === 0 ? <p className="text-forest-600">{t('none')}</p> : null}
-      <ul className="space-y-4">
+    <section aria-labelledby="reviews-h" className="mx-auto max-w-3xl space-y-6 px-7 py-10">
+      <h2 id="reviews-h" className="text-lg font-medium">
+        {tabs('reviews', { count })}
+      </h2>
+      {initial.length === 0 ? <p className="text-center">{t('none')}</p> : null}
+      <ul className="divide-y divide-black border-y border-black empty:hidden">
         {initial.map((r) => (
-          <li key={r.id} className="border-cream-200 rounded-2xl border bg-white p-4">
+          <li key={r.id} className="py-5">
             <div className="flex items-center gap-2">
               <StarRating value={r.rating} size="text-sm" />
               <span className="text-sm font-semibold">
                 {r.customer?.name?.split(' ')[0] ?? t('anonymous')}
               </span>
-              <span className="text-forest-500 text-xs">
-                {new Date(r.createdAt).toLocaleDateString()}
-              </span>
+              <span className="text-sm">{new Date(r.createdAt).toLocaleDateString()}</span>
             </div>
-            <p className="text-forest-700 mt-2 whitespace-pre-line">{r.comment}</p>
+            <p className="mt-2 whitespace-pre-line">{r.comment}</p>
           </li>
         ))}
       </ul>
@@ -68,25 +78,20 @@ export function ReviewsSection({ productId, initial }: { productId: string; init
         submitted ? (
           <InlineAlert tone="success">{t('thanks')}</InlineAlert>
         ) : (
-          <form
-            onSubmit={submit}
-            className="border-cream-200 bg-cream-50 space-y-3 rounded-2xl border p-4"
-            noValidate
-          >
+          <form onSubmit={submit} className="space-y-3 border border-black p-5" noValidate>
             <h3 className="font-semibold">{t('writeHeading')}</h3>
             <fieldset>
-              <legend className="text-forest-500 text-xs font-medium uppercase tracking-widest">
-                {t('ratingLabel')}
-              </legend>
+              <legend className="font-medium">{t('ratingLabel')}</legend>
               <div className="mt-1 flex gap-3">
                 {[1, 2, 3, 4, 5].map((n) => (
-                  <label key={n} className="flex items-center gap-1 text-sm">
+                  <label key={n} className="flex items-center gap-1">
                     <input
                       type="radio"
                       name="rating"
                       value={n}
                       checked={rating === n}
                       onChange={() => setRating(n)}
+                      className="accent-black"
                     />
                     {n}
                   </label>
@@ -106,15 +111,15 @@ export function ReviewsSection({ productId, initial }: { productId: string; init
           </form>
         )
       ) : (
-        <p className="text-sm">
+        <p className="text-center">
           <Link
-            className="underline"
+            className="caps font-medium underline"
             href={loginHref(typeof window === 'undefined' ? '/' : currentPath())}
           >
             {t('signInToReview')}
           </Link>
         </p>
       )}
-    </div>
+    </section>
   );
 }

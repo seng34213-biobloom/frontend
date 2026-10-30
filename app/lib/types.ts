@@ -15,7 +15,9 @@ export interface ProductVariant {
   name: string;
   size: string;
   price: string;
-  unitWeightG: number;
+  unitWeightG?: number;
+  /** Name used by the current catalogue API. */
+  unitWeightGrams?: number;
 }
 
 export interface ProductListItem {
@@ -172,13 +174,7 @@ export interface CheckoutResult {
 }
 
 export type OrderStatus =
-  | 'PENDING_PAYMENT'
-  | 'PAID'
-  | 'PACKING'
-  | 'SHIPPED'
-  | 'DELIVERED'
-  | 'CANCELLED'
-  | 'REFUNDED';
+  'PENDING_PAYMENT' | 'PAID' | 'PACKING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'REFUNDED';
 
 export type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED' | 'PARTIALLY_REFUNDED' | 'REFUNDED';
 

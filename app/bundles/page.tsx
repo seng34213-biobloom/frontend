@@ -16,12 +16,12 @@ export default async function BundlesPage() {
   const t = await getTranslations('bundles');
   const bundles = bundleList(await serverGet<Bundle[] | { items: Bundle[] }>('/api/bundles'));
   return (
-    <div className="mx-auto max-w-6xl px-6 py-10">
-      <PageHeader eyebrow={t('badge')} title={t('heading')} lead={t('lead')} />
+    <div>
+      <PageHeader title={t('heading')} lead={t('lead')} />
       {bundles.length === 0 ? (
-        <p className="mt-6">{t('empty')}</p>
+        <p className="band px-7 py-32 text-center text-xl font-semibold">{t('empty')}</p>
       ) : (
-        <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="ruled-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {bundles.map((b) => (
             <li key={b.id}>
               <BundleCard bundle={b} />

@@ -2,12 +2,35 @@
 
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useState } from 'react';
+import { HeroDoodles } from './brush-art';
 import { ButtonLink } from './button-link';
+import { ProductArt } from './product-art';
 
 const SLIDES = [
-  { key: 'seasonal', href: '/products?category=jams', tone: 'bg-brand-50' },
-  { key: 'subscribe', href: '/products', tone: 'bg-clay-100' },
-  { key: 'gifts', href: '/bundles', tone: 'bg-cream-100' },
+  {
+    key: 'seasonal',
+    href: '/products?category=jams',
+    packs: [
+      { name: 'Strawberry Jam', category: 'jams' },
+      { name: 'Mango Chutney', category: 'chutneys' },
+    ],
+  },
+  {
+    key: 'subscribe',
+    href: '/products',
+    packs: [
+      { name: 'Lime Pickle', category: 'pickles' },
+      { name: 'Kithul Treacle', category: 'sweeteners' },
+    ],
+  },
+  {
+    key: 'gifts',
+    href: '/bundles',
+    packs: [
+      { name: 'Tomato Relish', category: 'relishes' },
+      { name: 'Roasted Curry Spice', category: 'spices' },
+    ],
+  },
 ] as const;
 
 const ROTATE_MS = 7000;
@@ -49,13 +72,13 @@ export function HeroCarousel() {
   }, []);
 
   const controlClass =
-    'flex h-10 w-10 items-center justify-center rounded-full border border-forest-700/20 bg-cream-50 text-forest-700 transition-colors hover:bg-cream-100';
+    'flex h-10 w-10 items-center justify-center border border-black text-black hover:bg-sun';
 
   return (
     <section
       aria-roledescription={t('roleDescription')}
       aria-label={t('label')}
-      className="border-cream-200 relative overflow-hidden rounded-3xl border shadow-md"
+      className="band relative"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)}
@@ -63,7 +86,12 @@ export function HeroCarousel() {
         if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false);
       }}
     >
-      <div id={regionId} aria-live={rotating ? 'off' : 'polite'}>
+      <div
+        id={regionId}
+        aria-live={rotating ? 'off' : 'polite'}
+        className="relative overflow-hidden bg-white"
+      >
+        <HeroDoodles className="absolute left-1/2 top-[30%] h-auto w-[210%] max-w-none -translate-x-1/2 md:left-0 md:top-0 md:h-full md:w-full md:translate-x-0" />
         {SLIDES.map((slide, i) => (
           <div
             key={slide.key}
@@ -71,33 +99,33 @@ export function HeroCarousel() {
             aria-roledescription={t('slide')}
             aria-label={t('slideOf', { n: i + 1, total: SLIDES.length })}
             hidden={i !== index}
-            className={`${slide.tone} label-panel grid min-h-[22rem] gap-6 px-6 py-10 sm:px-10 md:min-h-[26rem] md:grid-cols-[1.3fr_0.7fr] md:items-center md:px-14`}
+            className={`${i === index ? 'grid' : 'hidden'} relative min-h-[34rem] grid-cols-1 gap-4 px-6 py-10 md:min-h-[41rem] md:grid-cols-[1.05fr_1fr] md:items-center md:px-[6.5%] md:py-12`}
           >
-            <div className="flex flex-col items-start gap-5">
-              <span className="border-cream-300 bg-cream-50 text-clay-500 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest">
-                <span aria-hidden="true" className="bg-brand-500 h-1.5 w-1.5 rounded-full" />
-                {t(`${slide.key}.eyebrow`)}
-              </span>
-              <h2 className="text-forest-700 font-serif text-4xl sm:text-5xl lg:text-6xl">
-                {t(`${slide.key}.title`)}
-              </h2>
-              <p className="text-forest-500 max-w-xl text-lg leading-relaxed">
-                {t(`${slide.key}.body`)}
-              </p>
-              <ButtonLink href={slide.href} className="px-6 py-3 text-base">
+            <div className="flex flex-col items-center gap-4 text-center md:items-start md:text-left">
+              <p className="caps text-sm font-medium">{t(`${slide.key}.eyebrow`)}</p>
+              <h2 className="font-serif text-4xl lg:text-5xl">{t(`${slide.key}.title`)}</h2>
+              <p className="caps max-w-md font-medium">{t(`${slide.key}.body`)}</p>
+              <ButtonLink href={slide.href} variant="cta" className="mt-3 min-w-[11.5rem]">
                 {t(`${slide.key}.cta`)}
               </ButtonLink>
             </div>
-            <div aria-hidden="true" className="hidden justify-center md:flex">
-              <span className="border-cream-300 bg-cream-50/70 text-forest-700/20 flex h-48 w-48 items-center justify-center rounded-full border font-serif text-7xl shadow-lg">
-                {['✦', '↻', '❀'][i]}
-              </span>
+            <div aria-hidden="true" className="flex items-end justify-center md:justify-start">
+              <ProductArt
+                name={slide.packs[0].name}
+                category={slide.packs[0].category}
+                className="-mr-[6%] h-[15rem] w-auto md:h-[21rem]"
+              />
+              <ProductArt
+                name={slide.packs[1].name}
+                category={slide.packs[1].category}
+                className="h-[20rem] w-auto md:h-[30rem]"
+              />
             </div>
           </div>
         ))}
       </div>
 
-      <div className="border-cream-200 bg-cream-50/90 flex flex-wrap items-center justify-between gap-3 border-t px-4 py-3 sm:px-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-black px-5 py-2 md:px-7">
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -126,7 +154,7 @@ export function HeroCarousel() {
             <span aria-hidden="true">→</span>
           </button>
         </div>
-        <div className="flex items-center gap-2" role="group" aria-label={t('choose')}>
+        <div className="flex items-center gap-1" role="group" aria-label={t('choose')}>
           {SLIDES.map((slide, i) => (
             <button
               key={slide.key}
@@ -135,11 +163,11 @@ export function HeroCarousel() {
               aria-label={t('slideOf', { n: i + 1, total: SLIDES.length })}
               aria-current={i === index ? 'true' : undefined}
               aria-controls={regionId}
-              className="flex h-10 w-10 items-center justify-center rounded-full"
+              className="flex h-10 w-10 items-center justify-center"
             >
               <span
                 aria-hidden="true"
-                className={`block h-2.5 rounded-full transition-all ${i === index ? 'bg-brand-600 w-6' : 'bg-forest-500 w-2.5'}`}
+                className={`block h-3.5 w-3.5 rounded-full border border-black ${i === index ? 'bg-black' : ''}`}
               />
             </button>
           ))}

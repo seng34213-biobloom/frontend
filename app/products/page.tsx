@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
-import { PageHeader } from '../components/page-header';
 import { ProductCard } from '../components/product-card';
 import { Pagination } from '../components/pagination';
 import { buttonClass } from '../components/button-styles';
-import { inputClass, labelTextClass } from '../components/form-field';
+import { inputClass } from '../components/form-styles';
 import { serverGet } from '../lib/server-api';
 import { KNOWN_CATEGORIES } from '../lib/categories';
 import type { ProductPage } from '../lib/types';
@@ -48,82 +47,78 @@ export default async function ProductsPage({
   const filtered = Boolean(category || search);
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-14 sm:px-6">
-      <PageHeader eyebrow={t('eyebrow')} title={t('heading')} lead={t('intro')} />
-
-      <form
-        method="get"
-        action="/products"
-        role="search"
-        aria-label={t('filtersLabel')}
-        className="border-cream-200 bg-cream-50 grid gap-4 rounded-3xl border p-5 shadow-sm sm:grid-cols-[1fr_2fr_auto] sm:items-end"
-      >
-        <div>
-          <label htmlFor="filter-category" className={labelTextClass}>
-            {t('category')}
-          </label>
-          <select
-            id="filter-category"
-            name="category"
-            defaultValue={category ?? ''}
-            className={`${inputClass} mt-1.5`}
-          >
-            <option value="">{t('allCategories')}</option>
-            {KNOWN_CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {tCategory(c)}
-              </option>
-            ))}
-            {category && !(KNOWN_CATEGORIES as readonly string[]).includes(category) && (
-              <option value={category}>{category}</option>
+    <div>
+      <div className="ruled-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        <header className="flex flex-col justify-center gap-1 p-7">
+          <h1 className="caps break-words font-serif text-xl">{t('metaTitle')}</h1>
+          <p role="status" className="text-sm">
+            {t('showing', { count: data.items.length, total: data.total })}
+          </p>
+        </header>
+        <form
+          id="catalogue-filters"
+          method="get"
+          action="/products"
+          role="search"
+          aria-label={t('filtersLabel')}
+          className="contents"
+        >
+          <div className="border-b border-r border-black p-5">
+            <label htmlFor="filter-category" className="caps block text-sm font-medium">
+              {t('category')}
+            </label>
+            <select
+              id="filter-category"
+              name="category"
+              defaultValue={category ?? ''}
+              className={`${inputClass} mt-1 !py-3`}
+            >
+              <option value="">{t('allCategories')}</option>
+              {KNOWN_CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {tCategory(c)}
+                </option>
+              ))}
+              {category && !(KNOWN_CATEGORIES as readonly string[]).includes(category) && (
+                <option value={category}>{category}</option>
+              )}
+            </select>
+          </div>
+          <div className="border-b border-r border-black p-5">
+            <label htmlFor="filter-search" className="caps block text-sm font-medium">
+              {t('search')}
+            </label>
+            <input
+              id="filter-search"
+              type="search"
+              name="search"
+              defaultValue={search ?? ''}
+              placeholder={t('searchPlaceholder')}
+              maxLength={120}
+              className={`${inputClass} mt-1 !py-3`}
+            />
+          </div>
+          <div className="flex items-end gap-2 border-b border-r border-black p-5">
+            <button type="submit" className={buttonClass('primary', 'flex-1')}>
+              {t('apply')}
+            </button>
+            {filtered && (
+              <Link href="/products" className={buttonClass('secondary', 'flex-1')}>
+                {t('clear')}
+              </Link>
             )}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="filter-search" className={labelTextClass}>
-            {t('search')}
-          </label>
-          <input
-            id="filter-search"
-            type="search"
-            name="search"
-            defaultValue={search ?? ''}
-            placeholder={t('searchPlaceholder')}
-            maxLength={120}
-            className={`${inputClass} mt-1.5`}
-          />
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <button type="submit" className={buttonClass('primary')}>
-            {t('apply')}
-          </button>
-          {filtered && (
-            <Link href="/products" className={buttonClass('ghost')}>
-              {t('clear')}
-            </Link>
-          )}
-        </div>
-      </form>
-
-      <p role="status" className="text-forest-500 text-sm">
-        {t('showing', { count: data.items.length, total: data.total })}
-      </p>
+          </div>
+        </form>
+      </div>
 
       {data.items.length === 0 ? (
-        <div className="border-cream-300 bg-cream-100/50 flex flex-col items-center gap-4 rounded-3xl border border-dashed px-6 py-20 text-center">
-          <span aria-hidden="true" className="text-4xl">
-            🌿
-          </span>
-          <p className="text-forest-500 text-lg">{filtered ? t('noMatches') : t('emptyState')}</p>
+        <div className="band flex flex-col items-center gap-4 px-7 py-32 text-center">
+          <p className="text-xl font-semibold">{filtered ? t('noMatches') : t('emptyState')}</p>
         </div>
       ) : (
-        <ul className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
-          {data.items.map((p, i) => (
-            <li
-              key={p.id}
-              className="animate-fade-up [animation-fill-mode:both]"
-              style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
-            >
+        <ul className="ruled-grid grid-cols-2 lg:grid-cols-4">
+          {data.items.map((p) => (
+            <li key={p.id}>
               <ProductCard product={p} />
             </li>
           ))}
