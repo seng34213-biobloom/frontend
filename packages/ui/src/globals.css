@@ -6,6 +6,19 @@
   :root {
     --bg-page: theme('colors.cream.50');
     --fg-default: theme('colors.forest.700');
+    /* Multiplies the type utilities; the storefront reads like a poster. */
+    --type-scale: 1.225;
+  }
+
+  @media (max-width: 767px) {
+    :root {
+      --type-scale: 1.12;
+    }
+  }
+
+  /* The console is a dense working tool, so it runs the type smaller. */
+  :root:has([data-console]) {
+    --type-scale: 1;
   }
 
   html {
@@ -20,45 +33,41 @@
   }
 
   body {
-    /* Inter optical polish: contextual alternates + stylistic sets. */
-    font-feature-settings:
-      'cv11' 1,
-      'ss01' 1,
-      'calt' 1;
+    font-size: calc(1rem * var(--type-scale));
+    line-height: 1.6;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /*
-   * Display headings. Existing markup uses the `.font-serif` utility for all
-   * headlines; in the reskin that slot is Inter, so we promote those headings
-   * to a heavy, tightly-tracked, balanced display treatment here — no per-page
-   * markup change required. Explicit Tailwind font-weight utilities still win.
-   */
+  /* The display face ships in one heavy cut; headings never fake a weight. */
   .font-serif {
     font-weight: 800;
-    letter-spacing: theme('letterSpacing.display');
-    line-height: 1.04;
+    letter-spacing: 0;
+    line-height: 1.2;
     text-wrap: balance;
   }
 
-  /* Tighten the very largest hero headings a touch more. */
-  .font-serif.text-5xl,
-  .font-serif.text-6xl {
-    letter-spacing: theme('letterSpacing.tightest');
+  .font-logo {
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1;
   }
 
-  /* Refined, on-brand focus ring across every interactive element. */
+  input[type='checkbox'],
+  input[type='radio'] {
+    accent-color: theme('colors.black');
+  }
+
+  /* One sharp, on-brand focus ring across every interactive element. */
   :focus-visible {
-    outline: 2px solid theme('colors.brand.500');
+    outline: 2px solid theme('colors.black');
     outline-offset: 2px;
-    border-radius: 3px;
   }
 
   ::selection {
-    background-color: theme('colors.brand.200');
-    color: theme('colors.forest.700');
+    background-color: rgba(0, 0, 0, 0.55);
+    color: theme('colors.white');
   }
 
   /* Honour users who prefer reduced motion — disable decorative motion. */
@@ -88,7 +97,6 @@
       theme('colors.cream.100') 100%
     );
     background-size: 200% 100%;
-    border-radius: theme('borderRadius.lg');
     animation: shimmer 1.6s ease-in-out infinite;
   }
 
@@ -98,18 +106,60 @@
     }
   }
 
-  /* Decorative kraft-label panel — artisan product imagery stand-in. */
-  .label-panel {
-    background-image:
-      radial-gradient(
-        120% 90% at 50% 0%,
-        rgba(255, 255, 255, 0.55) 0%,
-        rgba(255, 255, 255, 0) 60%
-      ),
-      linear-gradient(
-        160deg,
-        theme('colors.cream.100') 0%,
-        theme('colors.cream.200') 100%
-      );
+  /* Small uppercase label used for nav, buttons and section titles. */
+  .caps {
+    text-transform: uppercase;
+    letter-spacing: theme('letterSpacing.caps');
+  }
+
+  /* Edge-to-edge band: the next band starts on a hairline rule. */
+  .band {
+    width: 100%;
+    border-bottom: 1px solid theme('colors.black');
+  }
+
+  /* Page of padded blocks under a full-bleed title band. */
+  .page-stack {
+    padding-bottom: 2.5rem;
+  }
+
+  .page-stack > * + * {
+    margin-top: 1.75rem;
+  }
+
+  .page-stack > :not(.band) {
+    margin-inline: 1.75rem;
+  }
+
+  /* Grid whose cells share hairlines; the last column's rule sits off-canvas. */
+  .ruled-grid {
+    margin-right: -1px;
+    display: grid;
+  }
+
+  .ruled-grid > * {
+    border-right: 1px solid theme('colors.black');
+    border-bottom: 1px solid theme('colors.black');
+  }
+
+  /* Stepper arrows would fight the three-cell quantity control. */
+  .no-spin::-webkit-inner-spin-button,
+  .no-spin::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .no-spin {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  details > summary {
+    list-style: none;
+    cursor: pointer;
+  }
+
+  details > summary::-webkit-details-marker {
+    display: none;
   }
 }

@@ -132,10 +132,7 @@ export default function OrderDetailPage() {
       {notice ? <Alert tone="success">{notice}</Alert> : null}
 
       <div className="mt-4 grid gap-6 lg:grid-cols-3">
-        <section
-          className="border-cream-300 space-y-2 rounded-xl border bg-white p-4"
-          aria-labelledby="status-h"
-        >
+        <section className="space-y-2 border border-black p-4" aria-labelledby="status-h">
           <h2 id="status-h" className="font-semibold">
             Status
           </h2>
@@ -152,10 +149,7 @@ export default function OrderDetailPage() {
             <dd className="inline">{fmtDateTime(o.deliveredAt)}</dd>
           </dl>
         </section>
-        <section
-          className="border-cream-300 space-y-1 rounded-xl border bg-white p-4 text-sm"
-          aria-labelledby="ship-h"
-        >
+        <section className="space-y-1 border border-black p-4 text-sm" aria-labelledby="ship-h">
           <h2 id="ship-h" className="font-semibold">
             Ship to
           </h2>
@@ -167,10 +161,7 @@ export default function OrderDetailPage() {
           </p>
           {o.customer.phone ? <p>{o.customer.phone}</p> : null}
         </section>
-        <section
-          className="border-cream-300 space-y-1 rounded-xl border bg-white p-4 text-sm"
-          aria-labelledby="del-h"
-        >
+        <section className="space-y-1 border border-black p-4 text-sm" aria-labelledby="del-h">
           <h2 id="del-h" className="font-semibold">
             Delivery
           </h2>
@@ -195,7 +186,7 @@ export default function OrderDetailPage() {
         </section>
       </div>
 
-      <h2 className="mt-8 text-lg font-semibold">Items</h2>
+      <h2 className="mt-8 font-serif text-xl">Items</h2>
       <Table caption="Order items" captionHidden>
         <TableHead>
           <tr>
@@ -237,7 +228,7 @@ export default function OrderDetailPage() {
         <dd className="text-right font-semibold">{fmtMoney(o.totalAmount)}</dd>
       </dl>
 
-      <h2 className="mt-8 text-lg font-semibold">Payments</h2>
+      <h2 className="mt-8 font-serif text-xl">Payments</h2>
       <ul className="mt-2 space-y-1 text-sm">
         {o.payments.length === 0 ? <li>No payments yet.</li> : null}
         {o.payments.map((p) => (
@@ -248,7 +239,7 @@ export default function OrderDetailPage() {
         ))}
       </ul>
 
-      <h2 className="mt-8 text-lg font-semibold">Refund requests</h2>
+      <h2 className="mt-8 font-serif text-xl">Refund requests</h2>
       <ul className="mt-2 space-y-1 text-sm">
         {o.refundRequests.length === 0 ? <li>None.</li> : null}
         {o.refundRequests.map((r) => (

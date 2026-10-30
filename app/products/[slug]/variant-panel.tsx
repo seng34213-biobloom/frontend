@@ -3,11 +3,12 @@
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import { Button } from '@biobloom/ui';
+import { buttonClass } from '../../components/button-styles';
+import { MinusIcon, PlusIcon } from '../../components/icons';
 import { InlineAlert } from '../../components/inline-alert';
 import { StockIndicator } from '../../components/stock-indicator';
-import { api, isApiError } from '../../lib/api';
 import { useAuth } from '../../lib/auth-context';
+import { useCart } from '../../lib/cart-context';
 import { discountCents, fromCents, toCents } from '../../lib/money';
 import { loginHref } from '../../lib/navigation';
 import type { ProductVariant } from '../../lib/types';
@@ -40,6 +41,7 @@ export function VariantPanel({
   const t = useTranslations('pdp');
   const router = useRouter();
   const { user } = useAuth();
+  const { addItem } = useCart();
   const firstInStock = variants.find((v) => (stockByVariant[v.id] ?? 0) > 0) ?? variants[0];
   const [variantId, setVariantId] = useState(firstInStock?.id ?? '');
   const [quantity, setQuantity] = useState(1);
@@ -60,22 +62,21 @@ export function VariantPanel({
   const lineCents = (subscribe ? subscribeUnitCents : unitCents) * quantity;
   const here = `/products/${productSlug}`;
 
+  const maxQuantity = Math.max(1, Math.min(99, stock));
+
   async function addToCart() {
-    if (!user) {
-      router.push(loginHref(here));
-      return;
-    }
     setBusy(true);
     setMessage(null);
     try {
-      await api('POST', '/api/cart/items', { productVariantId: variant.id, quantity });
-      setMessage({
-        tone: 'success',
-        text: t('addedToCart', { name: `${productName} ${variant.size}` }),
-      });
+      const added = await addItem({ productVariantId: variant.id, quantity }, here);
+      if (added) {
+        setMessage({
+          tone: 'success',
+          text: t('addedToCart', { name: `${productName} ${variant.size}` }),
+        });
+      }
     } catch (e) {
-      if (isApiError(e, 401)) router.push(loginHref(here));
-      else setMessage({ tone: 'error', text: (e as Error).message });
+      setMessage({ tone: 'error', text: (e as Error).message });
     } finally {
       setBusy(false);
     }
@@ -89,18 +90,80 @@ export function VariantPanel({
   }
 
   return (
-    <section
-      className="border-cream-200 space-y-6 rounded-3xl border bg-white p-6 shadow-sm"
-      aria-labelledby="buy-h"
-    >
+    <section className="space-y-5 px-7 pb-7" aria-labelledby="buy-h">
       <h2 id="buy-h" className="sr-only">
         {t('buyHeading')}
       </h2>
+
+      <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
+        <p className="text-lg">
+          {subscribe ? (
+            <>
+              <span className="mr-2 line-through">LKR {fromCents(unitCents)}</span>
+              LKR {fromCents(subscribeUnitCents)}
+            </>
+          ) : (
+            <>LKR {fromCents(unitCents)}</>
+          )}
+        </p>
+        <p className="text-sm">
+          {variant.name} ·{' '}
+          {t('sku', {
+            sku: variant.sku,
+            weight: variant.unitWeightGrams ?? variant.unitWeightG ?? 0,
+          })}
+        </p>
+      </div>
+
+      <StockIndicator stock={stock} id="variant-stock" />
+      {earliestExpiryByVariant[variant.id] ? (
+        <p className="text-sm">
+          {t('fifoHint', {
+            date: new Date(earliestExpiryByVariant[variant.id] as string).toLocaleDateString(),
+          })}
+        </p>
+      ) : null}
+
+      <div>
+        <label htmlFor="variant-quantity" className="mb-1 block font-medium">
+          {t('quantity')}
+        </label>
+        <div className="grid grid-cols-3 divide-x divide-black border border-black">
+          <button
+            type="button"
+            disabled={soldOut || quantity <= 1}
+            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+            aria-label={t('decreaseQuantity')}
+            className="hover:bg-sun flex items-center justify-center py-4 disabled:opacity-40"
+          >
+            <MinusIcon />
+          </button>
+          <input
+            id="variant-quantity"
+            type="number"
+            min={1}
+            max={maxQuantity}
+            value={quantity}
+            disabled={soldOut}
+            aria-describedby="variant-stock"
+            onChange={(e) => setQuantity(Math.max(1, Math.min(99, Number(e.target.value) || 1)))}
+            className="no-spin min-w-0 bg-transparent py-4 text-center"
+          />
+          <button
+            type="button"
+            disabled={soldOut || quantity >= maxQuantity}
+            onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
+            aria-label={t('increaseQuantity')}
+            className="hover:bg-sun flex items-center justify-center py-4 disabled:opacity-40"
+          >
+            <PlusIcon />
+          </button>
+        </div>
+      </div>
+
       <fieldset>
-        <legend className="text-forest-500 text-xs font-medium uppercase tracking-widest">
-          {t('pickSize')}
-        </legend>
-        <div className="mt-2 flex flex-wrap gap-2">
+        <legend className="mb-1 font-medium">{t('pickSize')}</legend>
+        <div className="grid grid-cols-2 gap-2 lg:grid-cols-3">
           {variants.map((v) => (
             <button
               key={v.id}
@@ -111,70 +174,25 @@ export function VariantPanel({
                 setQuantity(1);
                 setMessage(null);
               }}
-              className={`rounded-full border px-4 py-2 text-sm font-medium ${
+              className={`flex flex-col items-center gap-1 border px-3 py-5 text-center ${
                 v.id === variant.id
-                  ? 'border-forest-700 bg-forest-700 text-cream-50'
-                  : 'border-forest-300 text-forest-700 bg-white'
+                  ? 'border-black outline outline-2 -outline-offset-2 outline-black'
+                  : 'hover:bg-sun border-black'
               }`}
             >
-              {v.size}
+              <span className="caps text-sm font-medium">{v.size}</span>
+              <span>LKR {fromCents(toCents(v.price))}</span>
             </button>
           ))}
         </div>
       </fieldset>
 
-      <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <p className="text-forest-800 text-3xl font-semibold">
-          {subscribe ? (
-            <>
-              <span className="text-forest-500 mr-2 text-lg line-through">
-                LKR {fromCents(unitCents)}
-              </span>
-              LKR {fromCents(subscribeUnitCents)}
-            </>
-          ) : (
-            <>LKR {fromCents(unitCents)}</>
-          )}
-        </p>
-        <p className="text-forest-600 text-sm">
-          {variant.name} · {t('sku', { sku: variant.sku, weight: variant.unitWeightG })}
-        </p>
-      </div>
-
-      <StockIndicator stock={stock} id="variant-stock" />
-      {earliestExpiryByVariant[variant.id] ? (
-        <p className="text-forest-500 text-xs">
-          {t('fifoHint', {
-            date: new Date(earliestExpiryByVariant[variant.id] as string).toLocaleDateString(),
-          })}
-        </p>
-      ) : null}
-
-      <div className="flex flex-wrap items-end gap-4">
-        <label className="text-forest-500 flex flex-col gap-1 text-xs font-medium uppercase tracking-widest">
-          {t('quantity')}
-          <input
-            type="number"
-            min={1}
-            max={Math.max(1, Math.min(99, stock))}
-            value={quantity}
-            disabled={soldOut}
-            aria-describedby="variant-stock"
-            onChange={(e) => setQuantity(Math.max(1, Math.min(99, Number(e.target.value) || 1)))}
-            className="border-forest-300 text-forest-700 w-24 rounded-lg border px-3 py-2 text-base"
-          />
-        </label>
-        <p className="text-sm">
-          {t('subtotal')}: <strong>LKR {fromCents(lineCents)}</strong>
-        </p>
-      </div>
-
-      <div className="border-brand-200 bg-brand-50 rounded-2xl border p-4">
+      <div className="border border-black p-5">
         <div className="flex items-start gap-3">
           <input
             id="sns-toggle"
             type="checkbox"
-            className="mt-1"
+            className="mt-1.5 h-4 w-4 accent-black"
             checked={subscribe}
             onChange={(e) => setSubscribe(e.target.checked)}
             aria-describedby="sns-desc"
@@ -183,18 +201,18 @@ export function VariantPanel({
             <label htmlFor="sns-toggle" className="font-semibold">
               {t('subscribeAndSave')}
             </label>
-            <p id="sns-desc" className="text-forest-600 text-sm">
+            <p id="sns-desc" className="text-sm">
               {t('subscribeDescription')}
             </p>
           </div>
         </div>
         {subscribe ? (
-          <label className="text-forest-500 mt-3 flex flex-col gap-1 text-xs font-medium uppercase tracking-widest">
+          <label className="mt-3 flex flex-col gap-1 font-medium">
             {t('frequencyEvery')}
             <select
               value={frequency}
               onChange={(e) => setFrequency(Number(e.target.value))}
-              className="border-forest-300 text-forest-700 w-56 rounded-lg border bg-white px-3 py-2 text-base normal-case tracking-normal"
+              className="w-full max-w-xs border border-black bg-white px-4 py-3 font-normal"
             >
               {FREQUENCIES.map((f) => (
                 <option key={f} value={f}>
@@ -212,15 +230,25 @@ export function VariantPanel({
         </div>
       ) : null}
 
-      <div className="flex flex-wrap gap-3">
+      <div className="sticky bottom-0 z-10">
         {subscribe ? (
-          <Button onClick={startSubscription} disabled={soldOut}>
+          <button
+            type="button"
+            onClick={startSubscription}
+            disabled={soldOut}
+            className={buttonClass('primary', 'w-full')}
+          >
             {t('startSubscription')}
-          </Button>
+          </button>
         ) : (
-          <Button onClick={() => void addToCart()} disabled={soldOut || busy}>
-            {busy ? t('adding') : t('addToCart')}
-          </Button>
+          <button
+            type="button"
+            onClick={() => void addToCart()}
+            disabled={soldOut || busy}
+            className={buttonClass('primary', 'w-full')}
+          >
+            {busy ? t('adding') : `LKR ${fromCents(lineCents)} — ${t('addToCart')}`}
+          </button>
         )}
       </div>
     </section>

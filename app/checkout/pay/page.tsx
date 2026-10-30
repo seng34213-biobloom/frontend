@@ -47,12 +47,12 @@ function MockPayment() {
   }
 
   return (
-    <div className="mx-auto max-w-lg px-6 py-10">
+    <div className="page-stack">
       <PageHeader eyebrow={t('eyebrow')} title={t('heading')} lead={t('lead')} />
       {error ? <InlineAlert>{error}</InlineAlert> : null}
       {!order && !error ? <Spinner label={t('loading')} /> : null}
       {order ? (
-        <div className="border-cream-200 mt-6 space-y-4 rounded-3xl border bg-white p-6">
+        <div className="max-w-xl space-y-4 border border-black p-7">
           <p>{t('order', { number: formatOrderNumber(order.orderNumber) })}</p>
           <p className="text-3xl font-semibold">LKR {order.totalAmount}</p>
           <div className="flex flex-wrap gap-3">

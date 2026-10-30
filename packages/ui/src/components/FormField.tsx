@@ -55,11 +55,7 @@ export function FormField({
     <div className={`space-y-1 ${className}`.trim()}>
       <label
         htmlFor={controlId}
-        className={
-          hideLabel
-            ? 'sr-only'
-            : 'text-forest-600 block text-xs font-semibold uppercase tracking-widest'
-        }
+        className={hideLabel ? 'sr-only' : 'text-forest-700 block text-sm font-semibold'}
       >
         {label}
         {required ? (
@@ -102,11 +98,11 @@ function useFieldProps<T extends React.AriaAttributes & { id?: string; required?
 }
 
 /*
- * Control borders use forest-300 (3.7:1 on white, 3.5:1 on cream-50) so the
- * field boundary meets WCAG 1.4.11; invalid fields switch to danger-700.
+ * Black hairlines on white fields keep the boundary well past WCAG 1.4.11;
+ * invalid fields switch to danger-700 with a heavier ring.
  */
 const controlBase =
-  'block w-full rounded-lg border border-forest-300 bg-white px-3 py-2 text-sm text-forest-700 placeholder:text-forest-400 hover:border-forest-500 aria-[invalid=true]:border-danger-700 disabled:cursor-not-allowed disabled:bg-cream-100 disabled:text-forest-500';
+  'block w-full border border-black bg-white px-3.5 py-3 text-sm text-black placeholder:text-forest-400 aria-[invalid=true]:border-danger-700 aria-[invalid=true]:ring-1 aria-[invalid=true]:ring-danger-700 disabled:cursor-not-allowed disabled:bg-cream-100 disabled:text-forest-500';
 
 export const Input = React.forwardRef<
   HTMLInputElement,
@@ -158,7 +154,7 @@ export function Checkbox({
         id={controlId}
         type="checkbox"
         aria-describedby={hintId}
-        className="border-forest-400 text-brand-600 mt-0.5 h-4 w-4 rounded"
+        className="mt-0.5 h-4 w-4 accent-black"
         {...props}
       />
       <div>

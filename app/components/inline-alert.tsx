@@ -3,9 +3,9 @@ import type { ReactNode } from 'react';
 type Tone = 'error' | 'success' | 'info';
 
 const toneClasses: Record<Tone, string> = {
-  error: 'border-danger-500 bg-danger-50 text-danger-700',
-  success: 'border-brand-300 bg-brand-50 text-brand-800',
-  info: 'border-cream-300 bg-cream-100 text-forest-600',
+  error: 'bg-blush',
+  success: 'bg-brand-200',
+  info: 'bg-cream-100',
 };
 
 const toneIcon: Record<Tone, string> = { error: '!', success: '✓', info: 'i' };
@@ -29,7 +29,7 @@ export function InlineAlert({
     <div
       id={id}
       role={tone === 'error' ? 'alert' : 'status'}
-      className={`flex items-start gap-2.5 rounded-2xl border p-3.5 text-sm font-medium ${toneClasses[tone]} ${className}`.trim()}
+      className={`flex items-start gap-2.5 border border-black p-4 text-sm font-medium text-black ${toneClasses[tone]} ${className}`.trim()}
     >
       <span
         aria-hidden="true"

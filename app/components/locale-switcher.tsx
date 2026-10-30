@@ -28,7 +28,7 @@ export function LocaleSwitcher() {
   }
 
   return (
-    <div className="inline-flex items-center gap-1 rounded-full border border-cream-300 bg-cream-50 p-1 text-xs">
+    <div className="inline-flex items-center divide-x divide-black border border-black text-sm">
       <span className="sr-only">{t('language')}</span>
       {(routing.locales as readonly AppLocale[]).map((l) => (
         <button
@@ -37,11 +37,7 @@ export function LocaleSwitcher() {
           onClick={() => setLocale(l)}
           aria-pressed={l === locale}
           disabled={isPending}
-          className={`rounded-full px-3 py-1 font-medium transition-colors ${
-            l === locale
-              ? 'bg-brand-600 text-cream-50'
-              : 'text-forest-600 hover:bg-cream-200'
-          }`}
+          className={`px-2.5 py-1 font-medium ${l === locale ? 'bg-black text-white' : 'hover:bg-sun text-black'}`}
         >
           {l === 'en' ? 'EN' : 'සිං'}
         </button>

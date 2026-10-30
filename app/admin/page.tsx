@@ -86,10 +86,7 @@ function AdminDashboard() {
         </dl>
       </section>
 
-      <section
-        aria-labelledby="revenue-heading"
-        className="border-cream-300 space-y-4 rounded-xl border bg-white p-6 shadow-sm"
-      >
+      <section aria-labelledby="revenue-heading" className="space-y-4 border border-black p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 id="revenue-heading" className="text-forest-700 font-serif text-2xl">
             Revenue, last {REVENUE_DAYS} days
@@ -106,10 +103,7 @@ function AdminDashboard() {
         ) : null}
       </section>
 
-      <section
-        aria-labelledby="top-heading"
-        className="border-cream-300 space-y-4 rounded-xl border bg-white p-6 shadow-sm"
-      >
+      <section aria-labelledby="top-heading" className="space-y-4 border border-black p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 id="top-heading" className="text-forest-700 font-serif text-2xl">
             Top sellers this month
@@ -136,7 +130,10 @@ function AdminDashboard() {
               top.data.map((row) => (
                 <tr key={row.productId}>
                   <Td className="font-medium">
-                    <Link href={`/admin/products/${row.productId}`} className="text-brand-700 underline">
+                    <Link
+                      href={`/admin/products/${row.productId}`}
+                      className="text-brand-700 underline"
+                    >
                       {row.productName}
                     </Link>
                   </Td>

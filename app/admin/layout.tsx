@@ -15,10 +15,10 @@ export const metadata: Metadata = {
  */
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-cream-50 text-forest-700 min-h-screen font-sans antialiased">
+    <div data-console className="bg-cream-50 text-forest-700 min-h-screen font-sans antialiased">
       <a
         href="#main-content"
-        className="focus:bg-forest-700 focus:text-cream-50 sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:px-4 focus:py-2"
+        className="focus:bg-forest-700 focus:text-white sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:px-4 focus:py-2"
       >
         Skip to main content
       </a>

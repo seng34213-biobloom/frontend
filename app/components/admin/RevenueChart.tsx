@@ -88,10 +88,10 @@ export function RevenueChart({ data, days }: { data: RevenuePoint[]; days: numbe
                   x2={W - PAD.right}
                   y1={y(t)}
                   y2={y(t)}
-                  stroke="#e8e0cf"
+                  stroke="#000000"
                   strokeWidth={1}
                 />
-                <text x={PAD.left - 8} y={y(t) + 4} textAnchor="end" fontSize={12} fill="#4c473c">
+                <text x={PAD.left - 8} y={y(t) + 4} textAnchor="end" fontSize={12} fill="#000000">
                   {compact(t)}
                 </text>
               </g>
@@ -101,7 +101,7 @@ export function RevenueChart({ data, days }: { data: RevenuePoint[]; days: numbe
               x2={W - PAD.right}
               y1={y(0)}
               y2={y(0)}
-              stroke="#8c8473"
+              stroke="#000000"
               strokeWidth={1}
             />
             {xTickIdx.map((i) => (
@@ -111,7 +111,7 @@ export function RevenueChart({ data, days }: { data: RevenuePoint[]; days: numbe
                 y={H - PAD.bottom + 18}
                 textAnchor={i === 0 ? 'start' : i === data.length - 1 ? 'end' : 'middle'}
                 fontSize={12}
-                fill="#4c473c"
+                fill="#000000"
               >
                 {shortDay(data[i].date)}
               </text>
@@ -121,7 +121,7 @@ export function RevenueChart({ data, days }: { data: RevenuePoint[]; days: numbe
               y={H - 6}
               textAnchor="middle"
               fontSize={12}
-              fill="#4c473c"
+              fill="#000000"
             >
               Date
             </text>
@@ -129,7 +129,7 @@ export function RevenueChart({ data, days }: { data: RevenuePoint[]; days: numbe
               transform={`translate(16 ${PAD.top + PLOT_H / 2}) rotate(-90)`}
               textAnchor="middle"
               fontSize={12}
-              fill="#4c473c"
+              fill="#000000"
             >
               Revenue (LKR)
             </text>
@@ -137,7 +137,7 @@ export function RevenueChart({ data, days }: { data: RevenuePoint[]; days: numbe
             <polyline
               points={points}
               fill="none"
-              stroke="#3f632e"
+              stroke="#000000"
               strokeWidth={2}
               strokeLinejoin="round"
               strokeLinecap="round"
@@ -149,15 +149,15 @@ export function RevenueChart({ data, days }: { data: RevenuePoint[]; days: numbe
                   x2={x(hover)}
                   y1={PAD.top}
                   y2={PAD.top + PLOT_H}
-                  stroke="#8c8473"
+                  stroke="#000000"
                   strokeDasharray="3 3"
                 />
                 <circle
                   cx={x(hover)}
                   cy={y(values[hover])}
                   r={5}
-                  fill="#3f632e"
-                  stroke="#faf7f0"
+                  fill="#000000"
+                  stroke="#fef9d9"
                   strokeWidth={2}
                 />
               </>
@@ -178,7 +178,7 @@ export function RevenueChart({ data, days }: { data: RevenuePoint[]; days: numbe
           {hovered && hover !== null ? (
             <div
               aria-hidden="true"
-              className="border-cream-300 pointer-events-none absolute top-2 rounded-lg border bg-white px-3 py-2 text-xs shadow-md"
+              className="border-black pointer-events-none absolute top-2 border bg-white px-3 py-2 text-xs"
               style={{
                 left: `${(x(hover) / W) * 100}%`,
                 transform: hover > data.length / 2 ? 'translateX(-105%)' : 'translateX(5%)',

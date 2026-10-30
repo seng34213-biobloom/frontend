@@ -3,10 +3,10 @@ import * as React from 'react';
 export type AlertTone = 'error' | 'warning' | 'success' | 'info';
 
 const toneClasses: Record<AlertTone, string> = {
-  error: 'border-danger-300 bg-danger-50 text-danger-700',
-  warning: 'border-amber-400 bg-amber-50 text-amber-700',
-  success: 'border-brand-300 bg-brand-50 text-brand-700',
-  info: 'border-cream-300 bg-cream-100 text-forest-600',
+  error: 'border-black bg-blush text-black',
+  warning: 'border-black bg-sun text-black',
+  success: 'border-black bg-brand-200 text-black',
+  info: 'border-black bg-cream-100 text-black',
 };
 
 const tonePrefix: Record<AlertTone, string> = {
@@ -30,7 +30,7 @@ export function Alert({ tone = 'info', title, className = '', children, ...rest 
   return (
     <div
       role={tone === 'error' ? 'alert' : 'status'}
-      className={`rounded-lg border p-3 text-sm ${toneClasses[tone]} ${className}`.trim()}
+      className={`border p-3 text-sm ${toneClasses[tone]} ${className}`.trim()}
       {...rest}
     >
       {title ? (

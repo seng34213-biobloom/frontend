@@ -1,11 +1,7 @@
 'use client';
 
 import { useId, type InputHTMLAttributes, type TextareaHTMLAttributes } from 'react';
-
-export const inputClass =
-  'block w-full rounded-xl border border-cream-300 bg-cream-50 px-3.5 py-2.5 text-forest-700 outline-none transition-colors focus:border-brand-500 focus:ring-2 focus:ring-brand-200 aria-[invalid=true]:border-danger-500 disabled:bg-cream-100';
-
-export const labelTextClass = 'text-xs font-medium uppercase tracking-widest text-forest-500';
+import { inputClass, labelTextClass } from './form-styles';
 
 interface FieldChrome {
   label: string;
@@ -43,12 +39,12 @@ export function TextField({
         {...rest}
       />
       {hint && (
-        <p id={hintId} className="text-forest-500 mt-1 text-xs">
+        <p id={hintId} className="mt-1 text-sm">
           {hint}
         </p>
       )}
       {error && (
-        <p id={errorId} className="text-danger-700 mt-1 text-xs font-semibold">
+        <p id={errorId} className="text-danger-700 mt-1 text-sm font-semibold">
           <span aria-hidden="true">! </span>
           {error}
         </p>
@@ -83,12 +79,12 @@ export function TextAreaField({
         {...rest}
       />
       {hint && (
-        <p id={hintId} className="text-forest-500 mt-1 text-xs">
+        <p id={hintId} className="mt-1 text-sm">
           {hint}
         </p>
       )}
       {error && (
-        <p id={errorId} className="text-danger-700 mt-1 text-xs font-semibold">
+        <p id={errorId} className="text-danger-700 mt-1 text-sm font-semibold">
           <span aria-hidden="true">! </span>
           {error}
         </p>

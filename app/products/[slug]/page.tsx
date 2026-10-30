@@ -3,10 +3,11 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { StarRating } from '../../components/star-rating';
+import { categoryLabel } from '../../lib/categories';
 import { serverGet, serverGetOptional } from '../../lib/server-api';
 import type { ProductDetail, Review } from '../../lib/types';
 import { ProductGallery } from './product-gallery';
-import { ProductTabs } from './product-tabs';
+import { ProductAccordions } from './product-accordions';
 import { ReviewsSection } from './reviews-section';
 import { VariantPanel } from './variant-panel';
 
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 /**
  * Product Detail Page (SDS §6.2). Server-rendered for SEO: gallery,
- * description, Ingredients & Allergens and Customer Reviews tabs. The
+ * description, Ingredients & Allergens accordions and Customer Reviews. The
  * variant selector, live stock indicator and Subscribe & Save toggle are the
  * client `VariantPanel`. Unknown slugs render not-found.tsx; an unreachable
  * API throws and renders the route's error state.
@@ -34,36 +35,43 @@ export default async function ProductDetailPage({ params }: Params) {
   const product = await serverGet<ProductDetail>(`/api/products/${encodeURIComponent(slug)}`);
   if (!product) notFound();
   const t = await getTranslations('pdp');
+  const tCategory = await getTranslations('categories');
   const reviews = (await serverGetOptional<Review[]>(`/api/products/${product.id}/reviews`)) ?? [];
   const rating = product.rating ?? { average: null, count: reviews.length };
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-10">
-      <nav className="text-sm" aria-label={t('breadcrumb')}>
-        <Link href="/products" className="text-brand-700 hover:text-brand-900 font-medium">
-          <span aria-hidden="true">←</span> {t('allProducts')}
-        </Link>
-      </nav>
+    <div>
+      <div className="band grid grid-cols-1 lg:grid-cols-[1fr_2fr]">
+        <div className="border-b border-black lg:border-b-0 lg:border-r">
+          <ProductGallery
+            name={product.name}
+            category={product.category}
+            images={product.images ?? []}
+          />
+        </div>
 
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14">
-        <ProductGallery name={product.name} images={product.images ?? []} />
-
-        <div className="flex flex-col gap-8">
-          <header className="space-y-3">
-            <span className="bg-clay-100 text-clay-500 inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-widest">
-              {product.category}
-            </span>
-            <h1 className="text-forest-700 font-serif text-4xl md:text-5xl">{product.name}</h1>
-            <p className="text-forest-500 text-sm font-medium">
-              {t('bySeller', { seller: product.seller.businessName })}
-            </p>
-            {rating.count > 0 && rating.average !== null ? (
-              <p className="text-forest-600 flex items-center gap-2 text-sm">
-                <StarRating value={Number(rating.average)} />
-                <span>{t('reviewCount', { count: rating.count })}</span>
+        <div className="min-w-0">
+          <div className="space-y-4 p-7">
+            <nav className="text-sm" aria-label={t('breadcrumb')}>
+              <Link href="/products" className="caps font-medium hover:underline">
+                {t('allProducts')}
+              </Link>
+            </nav>
+            <header className="space-y-2">
+              <h1 className="font-serif text-3xl md:text-4xl">{product.name}</h1>
+              <p>
+                {t('bySeller', { seller: product.seller.businessName })} ·{' '}
+                {categoryLabel(tCategory, product.category)}
               </p>
-            ) : null}
-          </header>
+              {rating.count > 0 && rating.average !== null ? (
+                <p className="flex items-center gap-2">
+                  <StarRating value={Number(rating.average)} />
+                  <span>{t('reviewCount', { count: rating.count })}</span>
+                </p>
+              ) : null}
+            </header>
+            <p className="whitespace-pre-line">{product.description}</p>
+          </div>
 
           <VariantPanel
             productSlug={product.slug}
@@ -72,34 +80,19 @@ export default async function ProductDetailPage({ params }: Params) {
             stockByVariant={product.stockByVariant}
             earliestExpiryByVariant={product.earliestExpiryByVariant}
           />
+
+          <ProductAccordions
+            ingredients={
+              <p className="whitespace-pre-line">{product.ingredients || t('noIngredients')}</p>
+            }
+            allergens={
+              <p className="whitespace-pre-line">{product.allergens || t('noAllergens')}</p>
+            }
+          />
         </div>
       </div>
 
-      <ProductTabs
-        reviewCount={rating.count}
-        description={
-          <p className="text-forest-600 max-w-3xl whitespace-pre-line text-lg leading-relaxed">
-            {product.description}
-          </p>
-        }
-        ingredients={
-          <dl className="max-w-3xl space-y-4">
-            <div>
-              <dt className="font-semibold">{t('ingredients')}</dt>
-              <dd className="text-forest-600 whitespace-pre-line">
-                {product.ingredients || t('noIngredients')}
-              </dd>
-            </div>
-            <div>
-              <dt className="font-semibold">{t('allergens')}</dt>
-              <dd className="text-forest-600 whitespace-pre-line">
-                {product.allergens || t('noAllergens')}
-              </dd>
-            </div>
-          </dl>
-        }
-        reviews={<ReviewsSection productId={product.id} initial={reviews} />}
-      />
+      <ReviewsSection productId={product.id} initial={reviews} count={rating.count} />
     </div>
   );
 }

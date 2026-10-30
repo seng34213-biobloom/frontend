@@ -33,7 +33,7 @@ function ConsoleLayout({ children }: { children: ReactNode }) {
       <main
         id="main-content"
         tabIndex={-1}
-        className="mx-auto flex w-full min-w-0 max-w-6xl flex-1 flex-col gap-8 px-4 py-8 sm:px-8"
+        className="flex w-full min-w-0 flex-1 flex-col gap-7 px-4 py-7 sm:px-7"
       >
         <PageAccess>{children}</PageAccess>
       </main>

@@ -3,11 +3,13 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
-import { Button, Spinner } from '@biobloom/ui';
+import { Spinner } from '@biobloom/ui';
 import { ButtonLink } from '../components/button-link';
+import { CartLineRow } from '../components/cart-line';
 import { InlineAlert } from '../components/inline-alert';
 import { PageHeader } from '../components/page-header';
 import { api } from '../lib/api';
+import { useCart } from '../lib/cart-context';
 import type { CartLine, CartView } from '../lib/types';
 import { useRequireAuth, useSessionExpiryRedirect } from '../lib/use-require-auth';
 
@@ -20,11 +22,21 @@ export default function CartPage() {
   const t = useTranslations('cart');
   const { ready } = useRequireAuth();
   const onAuthError = useSessionExpiryRedirect();
-  const [cart, setCart] = useState<CartView | null>(null);
+  const { setCart: shareCart } = useCart();
+  const [cart, setCartState] = useState<CartView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [lineErrors, setLineErrors] = useState<Record<string, string>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
   const [announce, setAnnounce] = useState('');
+
+  // Keeps the header count in step with this page's own copy of the cart.
+  const setCart = useCallback(
+    (next: CartView) => {
+      setCartState(next);
+      shareCart(next);
+    },
+    [shareCart],
+  );
 
   const load = useCallback(async () => {
     try {
@@ -33,7 +45,7 @@ export default function CartPage() {
     } catch (e) {
       if (!onAuthError(e)) setError((e as Error).message);
     }
-  }, [onAuthError]);
+  }, [onAuthError, setCart]);
 
   useEffect(() => {
     if (ready) void load();
@@ -58,114 +70,57 @@ export default function CartPage() {
 
   if (!ready || (!cart && !error)) {
     return (
-      <div className="mx-auto max-w-4xl px-6 py-10">
+      <div className="px-7 py-32 text-center">
         <Spinner label={t('loading')} />
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
+    <div>
       <PageHeader eyebrow={t('stepIndicator')} title={t('heading')} />
       <p className="sr-only" aria-live="polite">
         {announce}
       </p>
       {error ? <InlineAlert>{error}</InlineAlert> : null}
       {cart && cart.items.length === 0 ? (
-        <div className="border-cream-200 mt-8 rounded-3xl border bg-white p-8 text-center">
-          <p className="text-lg">{t('empty')}</p>
-          <ButtonLink href="/products" className="mt-4">
-            {t('browse')}
-          </ButtonLink>
+        <div className="flex flex-col items-center gap-4 px-7 py-40 text-center">
+          <p className="text-xl font-semibold">{t('empty')}</p>
+          <Link href="/products" className="caps font-semibold hover:underline">
+            {t('continueShopping')}
+          </Link>
         </div>
       ) : null}
       {cart && cart.items.length > 0 ? (
-        <>
-          <ul className="divide-cream-200 border-cream-200 mt-6 divide-y rounded-3xl border bg-white">
-            {cart.items.map((line) => {
-              const name = line.variant
-                ? `${line.variant.productName} — ${line.variant.name} (${line.variant.size})`
-                : (line.bundle?.name ?? '');
-              const href = line.variant
-                ? `/products/${line.variant.productSlug}`
-                : `/bundles/${line.bundle?.slug}`;
-              const unit = line.variant?.price ?? line.bundle?.price ?? '0';
-              const short = line.available < line.quantity;
-              return (
-                <li
-                  key={line.id}
-                  className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <div>
-                    <Link href={href} className="text-forest-800 font-semibold hover:underline">
-                      {name}
-                    </Link>
-                    <p className="text-forest-600 text-sm">{t('perUnit', { price: unit })}</p>
-                    <p className="text-sm" aria-live="polite">
-                      {short ? (
-                        <span className="text-danger-700 font-medium">
-                          {t('onlyNLeft', { count: line.available })}
-                        </span>
-                      ) : (
-                        <span className="text-forest-600">{t('inStock')}</span>
-                      )}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <label className="text-forest-500 text-xs font-medium uppercase tracking-widest">
-                      {t('quantity')}
-                      <input
-                        type="number"
-                        min={0}
-                        max={99}
-                        defaultValue={line.quantity}
-                        key={`${line.id}-${line.quantity}`}
-                        disabled={busyId === line.id}
-                        aria-describedby={lineErrors[line.id] ? `err-${line.id}` : undefined}
-                        aria-invalid={Boolean(lineErrors[line.id]) || undefined}
-                        onBlur={(e) => {
-                          const q = Math.max(0, Math.min(99, Number(e.target.value) || 0));
-                          if (q !== line.quantity) void update(line, q);
-                        }}
-                        className="border-forest-300 text-forest-700 ml-2 w-20 rounded-lg border px-2 py-1 text-base"
-                      />
-                    </label>
-                    <span className="w-28 text-right font-semibold">LKR {line.lineSubtotal}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      disabled={busyId === line.id}
-                      onClick={() => void update(line, 0)}
-                    >
-                      {t('remove')}
-                    </Button>
-                  </div>
-                  {lineErrors[line.id] ? (
-                    <p
-                      id={`err-${line.id}`}
-                      role="alert"
-                      className="text-danger-700 text-sm font-medium sm:basis-full"
-                    >
-                      {lineErrors[line.id]}
-                    </p>
-                  ) : null}
-                </li>
-              );
-            })}
+        <div className="grid lg:grid-cols-[2fr_1fr]">
+          <ul className="border-black lg:border-r">
+            {cart.items.map((line) => (
+              <CartLineRow
+                key={line.id}
+                line={line}
+                busy={busyId === line.id}
+                error={lineErrors[line.id]}
+                onChange={(q) => void update(line, q)}
+              />
+            ))}
           </ul>
-          <dl className="ml-auto mt-6 grid max-w-sm grid-cols-2 gap-2 text-sm">
-            <dt>{t('items')}</dt>
-            <dd className="text-right">{cart.itemCount}</dd>
-            <dt>{t('totalWeight')}</dt>
-            <dd className="text-right">{cart.totalWeightG} g</dd>
-            <dt className="font-semibold">{t('subtotal')}</dt>
-            <dd className="text-right font-semibold">LKR {cart.subtotal}</dd>
-          </dl>
-          <p className="text-forest-600 mt-2 text-right text-sm">{t('shippingNote')}</p>
-          <div className="mt-6 flex justify-end">
-            <ButtonLink href="/checkout">{t('continueCheckout')}</ButtonLink>
+          <div className="band lg:border-b-0">
+            <dl className="grid grid-cols-2 gap-2 p-7">
+              <dt>{t('items')}</dt>
+              <dd className="text-right">{cart.itemCount}</dd>
+              <dt>{t('totalWeight')}</dt>
+              <dd className="text-right">{cart.totalWeightG} g</dd>
+              <dt className="font-semibold">{t('subtotal')}</dt>
+              <dd className="text-right font-semibold">LKR {cart.subtotal}</dd>
+            </dl>
+            <p className="px-7 pb-5 text-sm">{t('shippingNote')}</p>
+            <div className="p-2">
+              <ButtonLink href="/checkout" className="w-full">
+                {t('continueCheckout')}
+              </ButtonLink>
+            </div>
           </div>
-        </>
+        </div>
       ) : null}
     </div>
   );

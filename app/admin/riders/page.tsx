@@ -110,7 +110,7 @@ export default function RidersPage() {
 
       {isAdmin ? (
         <form onSubmit={create} className="mt-8 grid max-w-2xl gap-3 sm:grid-cols-2" noValidate>
-          <h2 className="text-lg font-semibold sm:col-span-2">Add a rider</h2>
+          <h2 className="font-serif text-xl sm:col-span-2">Add a rider</h2>
           <FormField label="Name" required>
             <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </FormField>

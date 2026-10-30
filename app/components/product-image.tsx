@@ -2,29 +2,31 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import { ProductArt } from './product-art';
 
 /**
- * Product photo with the artisan-label panel as a fallback when the product
- * has no image yet or the media host cannot serve it. Images are loaded by
- * the browser straight from the media origin (`unoptimized`), because the
- * Next.js server inside Docker cannot reach the public MinIO URL.
+ * Product photo on a white pack-shot tile, falling back to the illustrated
+ * pack when the product has no image yet or the media host cannot serve it.
+ * Images are loaded by the browser straight from the media origin
+ * (`unoptimized`), because the Next.js server inside Docker cannot reach the
+ * public MinIO URL.
  */
 export function ProductImage({
   src,
   alt,
   name,
+  category,
   sizes,
   priority = false,
   className = '',
-  letterClassName = 'text-[5.5rem]',
 }: {
   src?: string | null;
   alt: string;
   name: string;
+  category?: string;
   sizes: string;
   priority?: boolean;
   className?: string;
-  letterClassName?: string;
 }) {
   const [failed, setFailed] = useState(false);
   if (!src || failed) {
@@ -32,19 +34,14 @@ export function ProductImage({
       <div
         role="img"
         aria-label={alt}
-        className={`label-panel relative flex items-center justify-center overflow-hidden ${className}`}
+        className={`relative flex items-center justify-center overflow-hidden bg-white ${className}`}
       >
-        <span
-          aria-hidden="true"
-          className={`tracking-tightest text-forest-700/15 font-serif leading-none ${letterClassName}`}
-        >
-          {name.trim().charAt(0)}
-        </span>
+        <ProductArt name={name} category={category} className="h-[92%] w-full" />
       </div>
     );
   }
   return (
-    <div className={`bg-cream-100 relative overflow-hidden ${className}`}>
+    <div className={`relative overflow-hidden bg-white ${className}`}>
       <Image
         src={src}
         alt={alt}
@@ -53,7 +50,7 @@ export function ProductImage({
         priority={priority}
         unoptimized
         onError={() => setFailed(true)}
-        className="object-cover"
+        className="object-contain"
       />
     </div>
   );

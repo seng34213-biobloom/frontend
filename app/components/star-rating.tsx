@@ -11,7 +11,7 @@ export function StarRating({ value, size = 'text-base' }: { value: number; size?
         <span
           key={i}
           aria-hidden="true"
-          className={i <= Math.round(rounded) ? 'text-amber-600' : 'text-cream-400'}
+          className={i <= Math.round(rounded) ? 'text-sky' : 'text-cream-400'}
         >
           ★
         </span>

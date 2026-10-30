@@ -83,14 +83,14 @@ export default function OrderDetailPage() {
 
   if (error) {
     return (
-      <div className="mx-auto max-w-4xl px-6 py-10">
+      <div className="page-stack">
         <InlineAlert>{error}</InlineAlert>
       </div>
     );
   }
   if (!order) {
     return (
-      <div className="mx-auto max-w-4xl px-6 py-10">
+      <div className="page-stack">
         <Spinner label={t('loading')} />
       </div>
     );
@@ -102,7 +102,7 @@ export default function OrderDetailPage() {
   );
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 px-6 py-10">
+    <div className="page-stack">
       <PageHeader
         eyebrow={t('eyebrow')}
         title={formatOrderNumber(order.orderNumber)}
@@ -123,7 +123,7 @@ export default function OrderDetailPage() {
               className="text-center text-xs"
             >
               <span
-                className={`mx-auto mb-1 block h-2 rounded-full ${i <= stepIndex ? 'bg-brand-600' : 'bg-cream-200'}`}
+                className={`mx-auto mb-1 block h-2 rounded-full ${i <= stepIndex ? 'bg-black' : 'bg-cream-200'}`}
                 aria-hidden="true"
               />
               <span className={i === stepIndex ? 'font-semibold' : ''}>{t(`statuses.${s}`)}</span>
@@ -132,17 +132,17 @@ export default function OrderDetailPage() {
           ))}
         </ol>
       ) : (
-        <p className="bg-cream-100 rounded-2xl p-4">
+        <p className="bg-sun border border-black p-4">
           {t(`statuses.${order.status}`)}
           {order.cancellationReason ? ` — ${order.cancellationReason}` : ''}
         </p>
       )}
 
       <section aria-labelledby="items-h">
-        <h2 id="items-h" className="text-lg font-semibold">
+        <h2 id="items-h" className="font-serif text-xl">
           {t('itemsHeading')}
         </h2>
-        <ul className="divide-cream-200 border-cream-200 mt-3 divide-y rounded-3xl border bg-white">
+        <ul className="mt-3 divide-y divide-black border border-black">
           {order.items.map((it) => (
             <li key={it.id} className="flex justify-between gap-3 p-4 text-sm">
               <span>
@@ -175,7 +175,7 @@ export default function OrderDetailPage() {
 
       <section aria-labelledby="delivery-h" className="grid gap-4 sm:grid-cols-2">
         <div>
-          <h2 id="delivery-h" className="text-lg font-semibold">
+          <h2 id="delivery-h" className="font-serif text-xl">
             {t('deliveryHeading')}
           </h2>
           {order.delivery ? (
@@ -222,7 +222,7 @@ export default function OrderDetailPage() {
 
       {order.refundRequests && order.refundRequests.length > 0 ? (
         <section aria-labelledby="refunds-h">
-          <h2 id="refunds-h" className="text-lg font-semibold">
+          <h2 id="refunds-h" className="font-serif text-xl">
             {t('refundsHeading')}
           </h2>
           <ul className="mt-2 space-y-1 text-sm">
@@ -236,12 +236,8 @@ export default function OrderDetailPage() {
       ) : null}
 
       {order.status === 'DELIVERED' && !openRefund ? (
-        <form
-          onSubmit={requestRefund}
-          className="border-cream-200 space-y-3 rounded-3xl border bg-white p-6"
-          noValidate
-        >
-          <h2 className="text-lg font-semibold">{t('requestRefund')}</h2>
+        <form onSubmit={requestRefund} className="space-y-3 border border-black p-7" noValidate>
+          <h2 className="font-serif text-xl">{t('requestRefund')}</h2>
           <TextField
             label={t('refundAmount')}
             hint={t('refundAmountHint', { total: order.totalAmount })}

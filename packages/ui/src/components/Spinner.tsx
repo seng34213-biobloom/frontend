@@ -18,7 +18,7 @@ export function Spinner({
     >
       <span
         aria-hidden="true"
-        className="border-cream-300 border-t-brand-600 h-4 w-4 animate-spin rounded-full border-2"
+        className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent"
       />
       <span>{label}</span>
     </span>

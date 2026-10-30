@@ -70,7 +70,7 @@ export default function SupportPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8 px-6 py-10">
+    <div className="page-stack">
       <PageHeader eyebrow={t('eyebrow')} title={t('heading')} lead={t('lead')} />
       {notice ? (
         <div aria-live="polite">
@@ -82,12 +82,8 @@ export default function SupportPage() {
           <InlineAlert>{error}</InlineAlert>
         </div>
       ) : null}
-      <form
-        onSubmit={open}
-        className="border-cream-200 space-y-3 rounded-3xl border bg-white p-6"
-        noValidate
-      >
-        <h2 className="text-lg font-semibold">{t('newTicket')}</h2>
+      <form onSubmit={open} className="space-y-3 border border-black p-7" noValidate>
+        <h2 className="font-serif text-xl">{t('newTicket')}</h2>
         <TextField
           label={t('subject')}
           required
@@ -111,10 +107,10 @@ export default function SupportPage() {
         <ul className="space-y-3">
           {tickets.length === 0 ? <li>{t('none')}</li> : null}
           {tickets.map((tk) => (
-            <li key={tk.id} className="border-cream-200 rounded-2xl border bg-white p-4">
+            <li key={tk.id} className="border border-black p-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-semibold">{tk.subject}</span>
-                <span className="bg-cream-100 rounded-full px-3 py-1 text-xs font-semibold">
+                <span className="caps border border-black px-2 py-0.5 text-sm font-medium">
                   {t(`statuses.${tk.status}`)}
                 </span>
               </div>

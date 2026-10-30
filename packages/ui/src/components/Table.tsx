@@ -31,7 +31,7 @@ export function Table({
       role="region"
       aria-labelledby={captionId}
       tabIndex={0}
-      className="border-cream-300 overflow-x-auto rounded-xl border bg-white"
+      className="overflow-x-auto border border-black bg-cream-50"
     >
       <table className={`w-full text-sm ${className}`.trim()} {...rest}>
         <caption
@@ -50,14 +50,12 @@ export function Table({
 
 export function TableHead({ children }: { children: React.ReactNode }) {
   return (
-    <thead className="bg-cream-100 text-forest-600 text-xs uppercase tracking-widest">
-      {children}
-    </thead>
+    <thead className="caps border-b border-black bg-black text-xs text-white">{children}</thead>
   );
 }
 
 export function TableBody({ children }: { children: React.ReactNode }) {
-  return <tbody className="divide-cream-200 divide-y">{children}</tbody>;
+  return <tbody className="divide-y divide-black">{children}</tbody>;
 }
 
 export function Th({
