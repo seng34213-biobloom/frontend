@@ -5,7 +5,7 @@ const CUSTOMER = { email: 'tharushi@example.com', password: 'Password123!' };
 /** DDP-#35 customer journey: browse → product → cart → checkout (mock gateway) → confirmation. */
 test('a customer can buy a product end to end', async ({ page }) => {
   await page.goto('/login');
-  await page.getByLabel('Email').fill(CUSTOMER.email);
+  await page.getByLabel('Email', { exact: true }).fill(CUSTOMER.email);
   await page.getByLabel('Password').fill(CUSTOMER.password);
   await page.getByRole('button', { name: 'Sign in' }).last().click();
   await expect(page).not.toHaveURL(/\/login/);
