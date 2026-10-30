@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useId, useRef, useState } from 'react';
+import { UserIcon } from './icons';
 
 export const ACCOUNT_LINKS = [
   { href: '/account/orders', key: 'orders' },
@@ -55,45 +56,40 @@ export function AccountMenu({ email, onSignOut }: { email: string; onSignOut: ()
         type="button"
         aria-expanded={open}
         aria-controls={menuId}
+        aria-label={t('menu')}
         onClick={() => setOpen((v) => !v)}
-        className="text-forest-600 hover:text-forest-700 inline-flex items-center gap-1.5 rounded-full text-sm font-medium transition-colors"
+        className="hover:text-brand-400 block p-2"
       >
-        {t('menu')}
-        <span
-          aria-hidden="true"
-          className={`text-xs transition-transform ${open ? 'rotate-180' : ''}`}
-        >
-          ▾
-        </span>
+        <UserIcon />
       </button>
       <div
         id={menuId}
         hidden={!open}
-        className="border-cream-200 bg-cream-50 absolute left-0 z-50 mt-3 w-64 max-w-[calc(100vw-2rem)] rounded-2xl border p-2 shadow-lg sm:left-auto sm:right-0"
+        className="bg-cream-50 absolute left-0 z-50 mt-3 w-72 max-w-[calc(100vw-2rem)] border border-black sm:left-auto sm:right-0"
       >
-        <p className="text-forest-500 truncate px-3 pb-2 pt-1 text-xs">
+        <p className="truncate border-b border-black px-5 py-3 text-sm">
           {t('signedInAs', { email })}
         </p>
-        <ul className="space-y-0.5">
+        <ul className="divide-y divide-black">
           {ACCOUNT_LINKS.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
                 aria-current={pathname === link.href ? 'page' : undefined}
-                className="text-forest-700 hover:bg-cream-100 aria-[current=page]:bg-brand-50 aria-[current=page]:text-brand-800 block rounded-xl px-3 py-2 text-sm font-medium transition-colors"
+                className="caps hover:bg-sun aria-[current=page]:bg-blush block px-5 py-3 text-sm font-medium"
               >
                 {t(link.key)}
               </Link>
             </li>
           ))}
-          <li className="border-cream-200 border-t pt-1">
+          <li>
             <button
               type="button"
               onClick={() => {
                 setOpen(false);
                 onSignOut();
               }}
-              className="text-forest-700 hover:bg-cream-100 block w-full rounded-xl px-3 py-2 text-left text-sm font-medium transition-colors"
+              className="caps hover:bg-sun block w-full px-5 py-3 text-left text-sm font-medium"
             >
               {t('signOut')}
             </button>
