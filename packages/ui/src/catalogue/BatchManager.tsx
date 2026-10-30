@@ -151,7 +151,7 @@ export function BatchManager({
 
       <form
         onSubmit={add}
-        className="border-cream-300 space-y-3 rounded-xl border bg-white p-4"
+        className="space-y-3 border border-black p-4"
         noValidate
         aria-labelledby="add-batch-h"
       >

@@ -24,6 +24,10 @@ type ModalProps = {
   /** Block Escape while a request is in flight. */
   dismissible?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  /** `side` turns the dialog into a full-height drawer on the right edge. */
+  placement?: 'center' | 'side';
+  /** Children draw the whole panel; the title stays as the dialog's hidden name. */
+  bare?: boolean;
 };
 
 const sizeClasses = { sm: 'max-w-md', md: 'max-w-lg', lg: 'max-w-2xl' };
@@ -44,6 +48,8 @@ export function Modal({
   initialFocusRef,
   dismissible = true,
   size = 'md',
+  placement = 'center',
+  bare = false,
 }: ModalProps) {
   const panelRef = React.useRef<HTMLDivElement>(null);
   const generated = React.useId().replace(/:/g, '');
@@ -107,8 +113,18 @@ export function Modal({
   if (!open || typeof document === 'undefined') return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center">
-      <div className="bg-forest-700/50 absolute inset-0" aria-hidden="true" />
+    <div
+      className={
+        placement === 'side'
+          ? 'fixed inset-0 z-50 flex justify-end'
+          : 'fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center'
+      }
+    >
+      <div
+        className={`absolute inset-0 ${placement === 'side' ? 'bg-cream-50/80' : 'bg-black/50'}`}
+        aria-hidden="true"
+        onClick={placement === 'side' && dismissible ? onClose : undefined}
+      />
       <div
         ref={panelRef}
         role="dialog"
@@ -116,18 +132,33 @@ export function Modal({
         aria-labelledby={titleId}
         aria-describedby={descId}
         tabIndex={-1}
-        className={`border-cream-300 bg-cream-50 relative max-h-[90vh] w-full overflow-y-auto rounded-2xl border p-6 shadow-xl ${sizeClasses[size]}`}
+        className={
+          placement === 'side'
+            ? 'bg-cream-50 animate-slide-in relative flex h-full w-full flex-col overflow-y-auto border-l border-black md:w-[59%] md:max-w-[53rem]'
+            : `bg-cream-50 relative max-h-[90vh] w-full overflow-y-auto border border-black p-7 ${sizeClasses[size]}`
+        }
       >
-        <h2 id={titleId} className="text-forest-700 text-lg font-bold">
-          {title}
-        </h2>
-        {description ? (
-          <div id={descId} className="text-forest-500 mt-1 text-sm">
-            {description}
-          </div>
-        ) : null}
-        {children ? <div className="mt-4 space-y-4">{children}</div> : null}
-        {footer ? <div className="mt-6 flex flex-wrap justify-end gap-2">{footer}</div> : null}
+        {bare ? (
+          <>
+            <h2 id={titleId} className="sr-only">
+              {title}
+            </h2>
+            {children}
+          </>
+        ) : (
+          <>
+            <h2 id={titleId} className="font-serif text-2xl">
+              {title}
+            </h2>
+            {description ? (
+              <div id={descId} className="text-forest-500 mt-1 text-sm">
+                {description}
+              </div>
+            ) : null}
+            {children ? <div className="mt-4 space-y-4">{children}</div> : null}
+            {footer ? <div className="mt-6 flex flex-wrap justify-end gap-2">{footer}</div> : null}
+          </>
+        )}
       </div>
     </div>,
     document.body,

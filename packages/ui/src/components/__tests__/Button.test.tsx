@@ -54,6 +54,6 @@ describe('LinkButton', () => {
     expect(link).toHaveAttribute('href', '/products');
     expect(link.closest('button')).toBeNull();
     expect(screen.queryByRole('button')).toBeNull();
-    expect(link.className).toContain('rounded-full');
+    expect(link.className).toContain('rounded-none');
   });
 });

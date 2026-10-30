@@ -11,23 +11,20 @@ export function StockBadge({ stock }: { stock: number }) {
   const t = useTranslations('stock');
   if (stock <= 0) {
     return (
-      <span className="bg-danger-100 text-danger-700 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold">
-        <span aria-hidden="true" className="bg-danger-500 h-1.5 w-1.5 rounded-full" />
+      <span className="bg-blush caps inline-flex items-center gap-2 border border-black px-2.5 py-0.5 text-sm font-medium">
         {t('outOfStock')}
       </span>
     );
   }
   if (stock < LOW_STOCK_THRESHOLD) {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-        <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-amber-600" />
+      <span className="bg-sun caps inline-flex items-center gap-2 border border-black px-2.5 py-0.5 text-sm font-medium">
         {t('onlyNLeft', { n: stock })}
       </span>
     );
   }
   return (
-    <span className="bg-brand-100 text-brand-700 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold">
-      <span aria-hidden="true" className="bg-brand-500 h-1.5 w-1.5 rounded-full" />
+    <span className="bg-leaf caps inline-flex items-center gap-2 border border-black px-2.5 py-0.5 text-sm font-medium">
       {t('inStock')}
     </span>
   );

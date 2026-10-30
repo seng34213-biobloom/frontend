@@ -328,7 +328,7 @@ function ProductForm({
         </div>
 
         {isNew ? (
-          <fieldset className="border-cream-300 space-y-3 rounded-xl border p-4">
+          <fieldset className="border-black space-y-3 border p-4">
             <legend className="px-1 text-sm font-semibold">Variants</legend>
             {variants.map((v, i) => (
               <VariantFields
@@ -484,7 +484,7 @@ function VariantsSection({
 
   return (
     <section aria-labelledby="variants-h" className="space-y-3">
-      <h2 id="variants-h" className="text-lg font-semibold">
+      <h2 id="variants-h" className="font-serif text-xl">
         Variants
       </h2>
       {error ? <Alert tone="error">{error}</Alert> : null}
@@ -588,7 +588,7 @@ function VariantsSection({
         </TableBody>
       </Table>
       <form
-        className="border-cream-300 space-y-2 rounded-xl border p-4"
+        className="border-black space-y-2 border p-4"
         onSubmit={(e) => {
           e.preventDefault();
           const problem = variantProblem(adding);
@@ -665,7 +665,7 @@ function ImagesSection({
 
   return (
     <section aria-labelledby="images-h" className="space-y-3">
-      <h2 id="images-h" className="text-lg font-semibold">
+      <h2 id="images-h" className="font-serif text-xl">
         Images
       </h2>
       {error ? <Alert tone="error">{error}</Alert> : null}
@@ -675,11 +675,7 @@ function ImagesSection({
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {product.images.map((img) => (
           <li key={img.id} className="space-y-1">
-            <img
-              src={img.url}
-              alt={img.altText}
-              className="aspect-square w-full rounded-lg object-cover"
-            />
+            <img src={img.url} alt={img.altText} className="aspect-square w-full object-cover" />
             <Button size="sm" variant="ghost" disabled={busy} onClick={() => void remove(img.id)}>
               Remove
             </Button>

@@ -29,23 +29,20 @@ export function Pagination({
     (p) => p === 1 || p === pageCount || Math.abs(p - page) <= 1,
   );
   const item =
-    'inline-flex min-w-10 items-center justify-center rounded-full border px-3 py-2 text-sm font-semibold transition-colors';
+    'inline-flex min-w-11 items-center justify-center border px-3.5 py-2.5 text-sm font-medium';
 
   return (
-    <nav aria-label={t('label')} className="flex justify-center">
+    <nav aria-label={t('label')} className="band flex justify-center p-7">
       <ul className="flex flex-wrap items-center gap-2">
         <li>
           {page > 1 ? (
-            <Link
-              href={href(page - 1)}
-              className={`${item} border-cream-300 text-forest-700 hover:bg-cream-100`}
-            >
+            <Link href={href(page - 1)} className={`${item} hover:bg-sun border-black text-black`}>
               <span aria-hidden="true">←</span> {t('previous')}
             </Link>
           ) : (
             <span
               aria-disabled="true"
-              className={`${item} border-forest-500 text-forest-500 border-dashed`}
+              className={`${item} border-dashed border-forest-400 text-forest-400`}
             >
               <span aria-hidden="true">←</span> {t('previous')}
             </span>
@@ -62,7 +59,7 @@ export function Pagination({
               href={href(p)}
               aria-current={p === page ? 'page' : undefined}
               aria-label={t('page', { n: p })}
-              className={`${item} ${p === page ? 'border-brand-600 bg-brand-600 text-cream-50' : 'border-cream-300 text-forest-700 hover:bg-cream-100'}`}
+              className={`${item} ${p === page ? 'border-black bg-black text-white' : 'hover:bg-sun border-black text-black'}`}
             >
               {p}
             </Link>
@@ -70,16 +67,13 @@ export function Pagination({
         ))}
         <li>
           {page < pageCount ? (
-            <Link
-              href={href(page + 1)}
-              className={`${item} border-cream-300 text-forest-700 hover:bg-cream-100`}
-            >
+            <Link href={href(page + 1)} className={`${item} hover:bg-sun border-black text-black`}>
               {t('next')} <span aria-hidden="true">→</span>
             </Link>
           ) : (
             <span
               aria-disabled="true"
-              className={`${item} border-forest-500 text-forest-500 border-dashed`}
+              className={`${item} border-dashed border-forest-400 text-forest-400`}
             >
               {t('next')} <span aria-hidden="true">→</span>
             </span>

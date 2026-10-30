@@ -9,18 +9,17 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary:
-    'bg-brand-600 text-cream-50 shadow-sm hover:bg-brand-700 hover:shadow-md focus-visible:ring-brand-500',
+  primary: 'border border-black bg-black text-white hover:bg-bark focus-visible:ring-black',
   secondary:
-    'border border-forest-300 bg-cream-50 text-forest-700 hover:border-forest-500 hover:bg-cream-100 focus-visible:ring-brand-500',
-  ghost: 'bg-transparent text-brand-700 hover:bg-brand-50 focus-visible:ring-brand-500',
+    'border border-black bg-transparent text-black hover:bg-black hover:text-white focus-visible:ring-black',
+  ghost: 'bg-transparent text-black underline-offset-4 hover:underline focus-visible:ring-black',
   danger:
-    'bg-danger-700 text-cream-50 shadow-sm hover:bg-danger-900 hover:shadow-md focus-visible:ring-danger-500',
+    'border border-danger-700 bg-danger-700 text-white hover:bg-danger-900 focus-visible:ring-danger-500',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: 'px-3.5 py-1.5 text-xs',
-  md: 'px-5 py-2.5 text-sm',
+  sm: 'px-3.5 py-2 text-xs',
+  md: 'px-6 py-3.5 text-sm',
 };
 
 /*
@@ -30,7 +29,7 @@ const sizeClasses: Record<ButtonSize, string> = {
  * forest-400 outline (5:1 against cream-100) and forest-500 text.
  */
 const disabledClasses =
-  'disabled:cursor-not-allowed disabled:border-transparent disabled:bg-cream-100 disabled:text-forest-500 disabled:shadow-none disabled:outline-dashed disabled:outline-1 disabled:outline-offset-0 disabled:outline-forest-400 disabled:hover:bg-cream-100 disabled:hover:shadow-none disabled:active:scale-100';
+  'disabled:cursor-not-allowed disabled:border-transparent disabled:bg-cream-100 disabled:text-forest-500 disabled:outline-dashed disabled:outline-1 disabled:outline-offset-0 disabled:outline-forest-400 disabled:hover:bg-cream-100';
 
 /** Class list shared by `Button` and `LinkButton` so both look identical. */
 export function buttonClassName({
@@ -42,7 +41,7 @@ export function buttonClassName({
   size?: ButtonSize;
   className?: string;
 } = {}): string {
-  return `inline-flex items-center justify-center gap-2 rounded-full font-semibold tracking-tight transition-all duration-200 ease-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-50 active:scale-[0.98] ${sizeClasses[size]} ${variantClasses[variant]} ${disabledClasses} ${className}`.trim();
+  return `caps inline-flex items-center justify-center gap-2 rounded-none font-semibold leading-none transition-colors duration-100 ease-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-50 ${sizeClasses[size]} ${variantClasses[variant]} ${disabledClasses} ${className}`.trim();
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(

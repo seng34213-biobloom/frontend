@@ -11,12 +11,9 @@ import { ButtonLink } from './button-link';
 export function ErrorState({ reset }: { reset: () => void }) {
   const t = useTranslations('errors');
   return (
-    <section className="mx-auto flex max-w-2xl flex-col items-center gap-5 px-4 py-24 text-center sm:px-6">
-      <span aria-hidden="true" className="text-4xl">
-        🌧️
-      </span>
-      <h1 className="text-forest-700 font-serif text-3xl md:text-4xl">{t('unavailableTitle')}</h1>
-      <p role="alert" className="text-forest-500 max-w-md text-lg">
+    <section className="flex flex-col items-center gap-5 px-7 py-32 text-center">
+      <h1 className="font-serif text-3xl md:text-4xl">{t('unavailableTitle')}</h1>
+      <p role="alert" className="max-w-md">
         {t('unavailableBody')}
       </p>
       <div className="flex flex-wrap justify-center gap-3">

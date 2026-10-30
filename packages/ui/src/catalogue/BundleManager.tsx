@@ -203,11 +203,7 @@ export function BundleManager({
       )}
 
       {draft ? (
-        <form
-          onSubmit={save}
-          className="border-cream-300 space-y-3 rounded-xl border bg-white p-4"
-          noValidate
-        >
+        <form onSubmit={save} className="space-y-3 border border-black p-4" noValidate>
           <h2 className="font-semibold">{draft.id ? 'Edit gift box' : 'New gift box'}</h2>
           {error ? <Alert tone="error">{error}</Alert> : null}
           <div className="grid gap-3 sm:grid-cols-2">
