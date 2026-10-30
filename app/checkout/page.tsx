@@ -36,17 +36,14 @@ function AddressPicker({
   const [adding, setAdding] = useState(addresses.length === 0);
   return (
     <section aria-labelledby="addr-h" className="space-y-3">
-      <h2 id="addr-h" className="text-lg font-semibold">
+      <h2 id="addr-h" className="font-serif text-xl">
         {t('shippingAddress')}
       </h2>
       {addresses.length > 0 ? (
         <fieldset className="space-y-2">
           <legend className="sr-only">{t('addressChoose')}</legend>
           {addresses.map((a) => (
-            <label
-              key={a.id}
-              className="border-cream-200 flex items-start gap-3 rounded-2xl border bg-white p-3"
-            >
+            <label key={a.id} className="flex items-start gap-3 border border-black p-4">
               <input
                 type="radio"
                 name="address"
@@ -84,12 +81,9 @@ function GatewayPicker({ value, onChange }: { value: Gateway; onChange: (g: Gate
   const t = useTranslations('checkout');
   return (
     <fieldset className="space-y-2">
-      <legend className="text-lg font-semibold">{t('paymentMethod')}</legend>
+      <legend className="font-serif text-xl">{t('paymentMethod')}</legend>
       {(['STRIPE', 'PAYHERE'] as const).map((g) => (
-        <label
-          key={g}
-          className="border-cream-200 flex items-center gap-3 rounded-2xl border bg-white p-3 text-sm"
-        >
+        <label key={g} className="flex items-center gap-3 border border-black p-4">
           <input
             type="radio"
             name="gateway"
@@ -180,11 +174,11 @@ function OrderCheckout() {
     }
   }
 
-  if (!addresses || !quote) return <Spinner label={t('loading')} />;
+  if (!addresses || !quote) return <Spinner label={t('loading')} className="p-7" />;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_22rem]">
-      <div className="space-y-8">
+    <div className="grid lg:grid-cols-[2fr_1fr]">
+      <div className="space-y-8 p-7 lg:border-r lg:border-black">
         <AddressPicker
           addresses={addresses}
           value={addressId}
@@ -196,14 +190,11 @@ function OrderCheckout() {
         />
         <GatewayPicker value={gateway} onChange={setGateway} />
       </div>
-      <aside
-        className="border-cream-200 space-y-4 rounded-3xl border bg-white p-6"
-        aria-labelledby="sum-h"
-      >
-        <h2 id="sum-h" className="text-lg font-semibold">
+      <aside className="space-y-4 border-t border-black p-7 lg:border-t-0" aria-labelledby="sum-h">
+        <h2 id="sum-h" className="font-serif text-xl">
           {t('summary')}
         </h2>
-        <dl className="grid grid-cols-2 gap-2 text-sm">
+        <dl className="grid grid-cols-2 gap-2">
           <dt>{t('subtotal')}</dt>
           <dd className="text-right">LKR {quote.subtotal}</dd>
           {Number(quote.discount ?? 0) > 0 ? (
@@ -229,17 +220,17 @@ function OrderCheckout() {
             void applyPromo();
           }}
         >
-          <label className="text-forest-500 flex-1 text-xs font-medium uppercase tracking-widest">
+          <label className="flex-1 font-medium">
             {t('promoLabel')}
             <input
               value={promoInput}
               onChange={(e) => setPromoInput(e.target.value)}
               aria-describedby={promoError ? 'promo-err' : undefined}
               aria-invalid={Boolean(promoError) || undefined}
-              className="border-forest-300 text-forest-700 mt-1 block w-full rounded-lg border px-3 py-2 text-base normal-case tracking-normal"
+              className="mt-1 block w-full border border-black bg-white px-4 py-3 font-normal"
             />
           </label>
-          <Button type="submit" variant="secondary" size="sm">
+          <Button type="submit" variant="secondary">
             {t('applyPromo')}
           </Button>
         </form>
@@ -362,10 +353,7 @@ function SubscribeCheckout() {
 
   if (created) {
     return (
-      <section
-        className="border-brand-200 bg-brand-50 space-y-4 rounded-3xl border p-6"
-        aria-live="polite"
-      >
+      <section className="bg-sun band space-y-4 p-7" aria-live="polite">
         <h2 className="text-2xl font-semibold">{t('subscriptionCreated')}</h2>
         <p>
           {created.quantity} × {created.product?.name} ({created.variant?.size}) ·{' '}
@@ -387,11 +375,11 @@ function SubscribeCheckout() {
     );
   }
 
-  if (!addresses) return <Spinner label={t('loading')} />;
+  if (!addresses) return <Spinner label={t('loading')} className="p-7" />;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_22rem]">
-      <div className="space-y-8">
+    <div className="grid lg:grid-cols-[2fr_1fr]">
+      <div className="space-y-8 p-7 lg:border-r lg:border-black">
         <AddressPicker
           addresses={addresses}
           value={addressId}
@@ -403,17 +391,14 @@ function SubscribeCheckout() {
         />
         <GatewayPicker value={gateway} onChange={setGateway} />
       </div>
-      <aside
-        className="border-cream-200 space-y-4 rounded-3xl border bg-white p-6"
-        aria-labelledby="sub-h"
-      >
-        <h2 id="sub-h" className="text-lg font-semibold">
+      <aside className="space-y-4 border-t border-black p-7 lg:border-t-0" aria-labelledby="sub-h">
+        <h2 id="sub-h" className="font-serif text-xl">
           {t('subscriptionSummary')}
         </h2>
         <p className="text-sm">
           {quantity} × {name}
         </p>
-        <dl className="grid grid-cols-2 gap-2 text-sm">
+        <dl className="grid grid-cols-2 gap-2">
           <dt>{t('everyLabel')}</dt>
           <dd className="text-right">{t('everyDays', { days: frequency })}</dd>
           <dt>{t('listPrice')}</dt>
@@ -423,7 +408,7 @@ function SubscribeCheckout() {
           <dt className="font-semibold">{t('perDelivery')}</dt>
           <dd className="text-right font-semibold">LKR {fromCents(discounted * quantity)}</dd>
         </dl>
-        <p className="bg-brand-50 rounded-xl p-3 text-sm font-medium">
+        <p className="bg-sun border border-black p-4 text-sm font-medium">
           {t('noChargeTodayLead', { days: frequency })}
         </p>
         {error ? <InlineAlert>{error}</InlineAlert> : null}
@@ -441,20 +426,18 @@ function CheckoutInner() {
   const { ready } = useRequireAuth();
   const subscribe = params.get('subscribe') === '1';
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10">
+    <div>
       <PageHeader
         eyebrow={t('stepIndicator')}
         title={subscribe ? t('subscribeHeading') : t('heading')}
       />
-      <div className="mt-6">
-        {!ready ? (
-          <Spinner label={t('loading')} />
-        ) : subscribe ? (
-          <SubscribeCheckout />
-        ) : (
-          <OrderCheckout />
-        )}
-      </div>
+      {!ready ? (
+        <Spinner label={t('loading')} className="p-7" />
+      ) : subscribe ? (
+        <SubscribeCheckout />
+      ) : (
+        <OrderCheckout />
+      )}
     </div>
   );
 }

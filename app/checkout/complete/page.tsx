@@ -53,7 +53,7 @@ function Complete() {
 
   const paid = !['PENDING_PAYMENT', 'CANCELLED'].includes(order.status);
   return (
-    <div className="space-y-6" aria-live="polite">
+    <div className="contents" aria-live="polite">
       {paid ? (
         <>
           <PageHeader
@@ -73,7 +73,7 @@ function Complete() {
       ) : (
         <PageHeader eyebrow={t('eyebrow')} title={t('pendingTitle')} lead={t('pendingLead')} />
       )}
-      <dl className="border-cream-200 grid max-w-sm grid-cols-2 gap-2 rounded-3xl border bg-white p-6 text-sm">
+      <dl className="grid max-w-lg grid-cols-2 gap-2 border border-black p-7">
         <dt>{t('orderNumber')}</dt>
         <dd className="text-right font-semibold">{formatOrderNumber(order.orderNumber)}</dd>
         <dt>{t('status')}</dt>
@@ -93,7 +93,7 @@ function Complete() {
 
 export default function CheckoutCompletePage() {
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
+    <div className="page-stack">
       <Suspense fallback={null}>
         <Complete />
       </Suspense>

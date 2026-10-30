@@ -48,10 +48,10 @@ function SubscriptionCard({
   };
 
   return (
-    <li className="border-cream-200 space-y-3 rounded-3xl border bg-white p-6">
+    <li className="space-y-3 border border-black p-7">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-forest-800 text-lg font-semibold">
+          <h2 className="text-forest-800 font-serif text-xl">
             {sub.product ? (
               <Link href={`/products/${sub.product.slug}`} className="hover:underline">
                 {sub.product.name}
@@ -63,7 +63,7 @@ function SubscriptionCard({
             {t('frequencyDays', { days: sub.frequencyDays })}
           </p>
         </div>
-        <span className="bg-cream-100 rounded-full px-3 py-1 text-xs font-semibold">
+        <span className="caps border border-black px-2 py-0.5 text-sm font-medium">
           {t(`statuses.${sub.status}`)}
         </span>
       </div>
@@ -148,7 +148,7 @@ export default function SubscriptionsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
+    <div className="page-stack">
       <PageHeader eyebrow={t('badge')} title={t('heading')} lead={t('lead')} />
       <p className="sr-only" aria-live="polite">
         {announce}
@@ -156,7 +156,7 @@ export default function SubscriptionsPage() {
       {error ? <InlineAlert>{error}</InlineAlert> : null}
       {!subs && !error ? <Spinner label={t('loading')} /> : null}
       {subs && subs.length === 0 ? (
-        <div className="border-cream-200 mt-6 rounded-3xl border bg-white p-8 text-center">
+        <div className="border border-black p-8 text-center">
           <p>{t('empty')}</p>
           <ButtonLink href="/products" className="mt-4">
             {t('browse')}
@@ -164,7 +164,7 @@ export default function SubscriptionsPage() {
         </div>
       ) : null}
       {subs && subs.length > 0 ? (
-        <ul className="mt-6 space-y-4">
+        <ul className="space-y-4">
           {subs.map((s) => (
             <SubscriptionCard key={s.id} sub={s} onChanged={replace} onCancel={setCancelling} />
           ))}

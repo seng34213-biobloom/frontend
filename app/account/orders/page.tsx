@@ -28,12 +28,12 @@ export default function OrdersPage() {
   }, [ready, onAuthError]);
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
+    <div className="page-stack">
       <PageHeader eyebrow={t('eyebrow')} title={t('heading')} />
       {error ? <InlineAlert>{error}</InlineAlert> : null}
       {!orders && !error ? <Spinner label={t('loading')} /> : null}
       {orders && orders.length === 0 ? (
-        <div className="border-cream-200 mt-6 rounded-3xl border bg-white p-8 text-center">
+        <div className="border border-black p-8 text-center">
           <p>{t('empty')}</p>
           <ButtonLink href="/products" className="mt-4">
             {t('browse')}
@@ -41,7 +41,7 @@ export default function OrdersPage() {
         </div>
       ) : null}
       {orders && orders.length > 0 ? (
-        <ul className="divide-cream-200 border-cream-200 mt-6 divide-y rounded-3xl border bg-white">
+        <ul className="divide-y divide-black border border-black">
           {orders.map((o) => (
             <li key={o.id} className="flex flex-wrap items-center justify-between gap-3 p-5">
               <div>
@@ -55,7 +55,7 @@ export default function OrdersPage() {
                   {new Date(o.placedAt).toLocaleDateString()} · {t('items', { count: o.itemCount })}
                 </p>
               </div>
-              <span className="bg-cream-100 rounded-full px-3 py-1 text-sm font-medium">
+              <span className="caps border border-black px-2 py-0.5 text-sm font-medium">
                 {t(`statuses.${o.status}`)}
               </span>
               <span className="font-semibold">LKR {o.totalAmount}</span>

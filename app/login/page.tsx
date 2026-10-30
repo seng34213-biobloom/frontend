@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState, type FormEvent } from 'react';
-import { Button } from '@biobloom/ui';
+import { buttonClass } from '../components/button-styles';
 import { TextField } from '../components/form-field';
 import { InlineAlert } from '../components/inline-alert';
 import { api } from '../lib/api';
@@ -74,8 +74,8 @@ function LoginForm() {
         setError(null);
         setPasswordError(undefined);
       }}
-      className={`flex-1 rounded-full px-4 py-2 text-sm font-semibold ${
-        tab === value ? 'bg-forest-700 text-cream-50' : 'text-forest-700'
+      className={`caps flex-1 px-4 py-3 text-sm font-semibold ${
+        tab === value ? 'bg-black text-white' : 'hover:bg-sun text-black'
       }`}
     >
       {label}
@@ -83,65 +83,73 @@ function LoginForm() {
   );
 
   return (
-    <div className="mx-auto max-w-md px-6 py-12">
-      <h1 className="text-forest-700 font-serif text-4xl">
-        {tab === 'signin' ? t('signInHeading') : t('registerHeading')}
-      </h1>
-      <p className="text-forest-600 mt-2">{t('lead')}</p>
-      <div
-        role="tablist"
-        aria-label={t('tabsLabel')}
-        className="border-cream-200 bg-cream-100/60 mb-5 mt-6 flex gap-1 rounded-full border p-1"
-      >
-        {tabButton('signin', t('signInTab'))}
-        {tabButton('register', t('registerTab'))}
+    <div className="grid md:grid-cols-2">
+      <div className="band p-7 md:border-b-0 md:border-r">
+        <h1 className="font-serif text-3xl md:text-4xl">
+          {tab === 'signin' ? t('signInHeading') : t('registerHeading')}
+        </h1>
+        <p className="mt-3 max-w-xl">{t('lead')}</p>
       </div>
-      <form id="auth-panel" role="tabpanel" onSubmit={submit} className="space-y-4" noValidate>
-        {error ? (
-          <div role="alert">
-            <InlineAlert>{error}</InlineAlert>
-          </div>
-        ) : null}
-        {tab === 'register' ? (
-          <>
-            <TextField
-              label={t('name')}
-              autoComplete="name"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <TextField
-              label={t('phone')}
-              autoComplete="tel"
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-          </>
-        ) : null}
-        <TextField
-          label={t('email')}
-          type="email"
-          autoComplete="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <TextField
-          label={t('password')}
-          type="password"
-          required
-          autoComplete={tab === 'signin' ? 'current-password' : 'new-password'}
-          hint={tab === 'register' ? t('passwordRule') : undefined}
-          error={passwordError}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Button type="submit" className="w-full" disabled={busy || !email || !password}>
-          {busy ? t('working') : tab === 'signin' ? t('signInTab') : t('registerTab')}
-        </Button>
-      </form>
+      <div className="p-7">
+        <div
+          role="tablist"
+          aria-label={t('tabsLabel')}
+          className="mb-5 flex divide-x divide-black border border-black"
+        >
+          {tabButton('signin', t('signInTab'))}
+          {tabButton('register', t('registerTab'))}
+        </div>
+        <form id="auth-panel" role="tabpanel" onSubmit={submit} className="space-y-4" noValidate>
+          {error ? (
+            <div role="alert">
+              <InlineAlert>{error}</InlineAlert>
+            </div>
+          ) : null}
+          {tab === 'register' ? (
+            <>
+              <TextField
+                label={t('name')}
+                autoComplete="name"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <TextField
+                label={t('phone')}
+                autoComplete="tel"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </>
+          ) : null}
+          <TextField
+            label={t('email')}
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            label={t('password')}
+            type="password"
+            required
+            autoComplete={tab === 'signin' ? 'current-password' : 'new-password'}
+            hint={tab === 'register' ? t('passwordRule') : undefined}
+            error={passwordError}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            type="submit"
+            className={buttonClass('action', 'w-full')}
+            disabled={busy || !email || !password}
+          >
+            {busy ? t('working') : tab === 'signin' ? t('signInTab') : t('registerTab')}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

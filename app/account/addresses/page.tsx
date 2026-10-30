@@ -40,7 +40,7 @@ export default function AddressesPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8 px-6 py-10">
+    <div className="page-stack">
       <PageHeader eyebrow={t('eyebrow')} title={t('heading')} />
       {error ? <InlineAlert>{error}</InlineAlert> : null}
       {!addresses && !error ? <Spinner label={t('loading')} /> : null}
@@ -50,14 +50,14 @@ export default function AddressesPage() {
           {addresses.map((a) => (
             <li
               key={a.id}
-              className="border-cream-200 flex flex-wrap items-center justify-between gap-3 rounded-2xl border bg-white p-4"
+              className="flex flex-wrap items-center justify-between gap-3 border border-black p-5"
             >
               <address className="text-sm not-italic">
                 {a.line1}
                 {a.line2 ? `, ${a.line2}` : ''}, {a.city}, {a.district} {a.postalCode}
               </address>
               {a.isDefault ? (
-                <span className="bg-brand-100 text-brand-800 rounded-full px-3 py-1 text-xs font-semibold">
+                <span className="bg-leaf caps border border-black px-2 py-0.5 text-sm font-medium">
                   {t('default')}
                 </span>
               ) : (
@@ -69,8 +69,8 @@ export default function AddressesPage() {
           ))}
         </ul>
       ) : null}
-      <section aria-labelledby="add-h" className="border-cream-200 rounded-3xl border bg-white p-6">
-        <h2 id="add-h" className="mb-4 text-lg font-semibold">
+      <section aria-labelledby="add-h" className="border border-black p-7">
+        <h2 id="add-h" className="mb-4 font-serif text-xl">
           {t('addHeading')}
         </h2>
         <AddressForm makeDefault={addresses?.length === 0} onSaved={() => void load()} />
