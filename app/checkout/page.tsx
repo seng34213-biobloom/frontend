@@ -250,7 +250,7 @@ function OrderCheckout() {
         ) : null}
         {error ? <InlineAlert>{error}</InlineAlert> : null}
         <Button className="w-full" disabled={busy} onClick={() => void placeOrder()}>
-          {busy ? t('placingOrder') : t('placeOrder')}
+          {busy ? t('placingOrder') : t('placeOrder', { total: `LKR ${quote.total}` })}
         </Button>
         <p className="text-forest-500 text-xs">{t('hostedNote')}</p>
         <Link href="/cart" className="block text-sm underline">
