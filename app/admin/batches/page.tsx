@@ -134,7 +134,7 @@ export default function BatchesPage() {
     : [];
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-8 px-6 py-12">
+    <div className="mx-auto flex max-w-5xl flex-col gap-8 px-6 py-12">
       <header className="space-y-2">
         <span className="rounded-full bg-clay-100 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-clay-500">
           Batch management
@@ -242,7 +242,7 @@ export default function BatchesPage() {
           </div>
         </form>
       </section>
-    </main>
+    </div>
   );
 }
 

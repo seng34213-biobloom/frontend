@@ -8,18 +8,21 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+/**
+ * Console layout. It is nested inside the storefront root layout, which owns
+ * `<html>` and `<body>` and leaves its own header, footer and `<main>` off
+ * `/admin` routes (see StorefrontFrame).
+ */
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="bg-cream-50 text-forest-700 min-h-screen font-sans antialiased">
-        <a
-          href="#main-content"
-          className="focus:bg-forest-700 focus:text-cream-50 sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:px-4 focus:py-2"
-        >
-          Skip to main content
-        </a>
-        <AppShell>{children}</AppShell>
-      </body>
-    </html>
+    <div className="bg-cream-50 text-forest-700 min-h-screen font-sans antialiased">
+      <a
+        href="#main-content"
+        className="focus:bg-forest-700 focus:text-cream-50 sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:px-4 focus:py-2"
+      >
+        Skip to main content
+      </a>
+      <AppShell>{children}</AppShell>
+    </div>
   );
 }
