@@ -74,7 +74,7 @@ export default function DeliveriesPage() {
               rows.data.map((a) => (
                 <tr key={a.id}>
                   <Td>
-                    <Link href={`/orders/${a.orderId}`} className="underline">
+                    <Link href={`/admin/orders/${a.orderId}`} className="underline">
                       {fmtOrderNumber(a.order?.orderNumber, a.orderId)}
                     </Link>
                   </Td>

@@ -94,7 +94,7 @@ function AdminDashboard() {
           <h2 id="revenue-heading" className="text-forest-700 font-serif text-2xl">
             Revenue, last {REVENUE_DAYS} days
           </h2>
-          <Link href="/orders" className="text-brand-700 text-sm font-medium underline">
+          <Link href="/admin/orders" className="text-brand-700 text-sm font-medium underline">
             View orders
           </Link>
         </div>
@@ -114,7 +114,7 @@ function AdminDashboard() {
           <h2 id="top-heading" className="text-forest-700 font-serif text-2xl">
             Top sellers this month
           </h2>
-          <Link href="/products" className="text-brand-700 text-sm font-medium underline">
+          <Link href="/admin/products" className="text-brand-700 text-sm font-medium underline">
             Manage products
           </Link>
         </div>
@@ -136,7 +136,7 @@ function AdminDashboard() {
               top.data.map((row) => (
                 <tr key={row.productId}>
                   <Td className="font-medium">
-                    <Link href={`/products/${row.productId}`} className="text-brand-700 underline">
+                    <Link href={`/admin/products/${row.productId}`} className="text-brand-700 underline">
                       {row.productName}
                     </Link>
                   </Td>

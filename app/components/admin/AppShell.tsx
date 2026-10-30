@@ -3,12 +3,12 @@
 import type { ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { AuthProvider, useAuth } from '../../lib/admin/auth-context';
-import { isStaffRole } from '../../lib/admin/nav';
+import { ADMIN_LOGIN, isStaffRole } from '../../lib/admin/nav';
 import { useNavBadges } from '../../lib/admin/use-nav-badges';
 import { PageAccess, RouteGuard } from './RouteGuard';
 import { Sidebar } from './Sidebar';
 
-const PUBLIC_PATHS = new Set(['/login']);
+const PUBLIC_PATHS = new Set([ADMIN_LOGIN]);
 
 function ConsoleLayout({ children }: { children: ReactNode }) {
   const { user, signOut } = useAuth();
@@ -27,7 +27,7 @@ function ConsoleLayout({ children }: { children: ReactNode }) {
         pathname={pathname}
         badges={badges}
         onSignOut={() => {
-          void signOut().then(() => router.replace('/login'));
+          void signOut().then(() => router.replace(ADMIN_LOGIN));
         }}
       />
       <main

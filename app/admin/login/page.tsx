@@ -5,11 +5,11 @@ import { Suspense, useEffect, useState, type FormEvent } from 'react';
 import { Alert, Button, FormField, Input } from '@biobloom/ui';
 import { adminApi, errorMessage } from '../../lib/admin/api';
 import { useAuth } from '../../lib/admin/auth-context';
-import { isStaffRole } from '../../lib/admin/nav';
+import { ADMIN_HOME, isConsolePath, isStaffRole } from '../../lib/admin/nav';
 
-/** Only relative console paths are accepted as a post-login destination. */
+/** Only console paths are accepted as a post-login destination. */
 function safeNext(next: string | null): string {
-  return next && next.startsWith('/') && !next.startsWith('//') ? next : '/';
+  return next && isConsolePath(next) ? next : ADMIN_HOME;
 }
 
 function LoginForm() {

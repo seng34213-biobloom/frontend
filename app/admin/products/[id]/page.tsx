@@ -15,8 +15,8 @@ export default function EditProductPage() {
         client={catalogueClient}
         productId={id}
         canPickSeller
-        basePath="/products"
-        onCreated={(next) => router.replace(`/products/${next}`)}
+        basePath="/admin/products"
+        onCreated={(next) => router.replace(`/admin/products/${next}`)}
       />
     </>
   );

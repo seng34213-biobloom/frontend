@@ -11,7 +11,7 @@ export default function ProductsPage() {
         title="Products & batches"
         description="Every seller's products. Open a product to edit it, or its batches to record new stock."
       />
-      <ProductList client={catalogueClient} basePath="/products" showSeller />
+      <ProductList client={catalogueClient} basePath="/admin/products" showSeller />
     </>
   );
 }

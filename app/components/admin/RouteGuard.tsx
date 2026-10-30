@@ -4,7 +4,7 @@ import { useEffect, type ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Alert, Button, Spinner } from '@biobloom/ui';
 import { useAuth } from '../../lib/admin/auth-context';
-import { canAccess, isStaffRole } from '../../lib/admin/nav';
+import { ADMIN_LOGIN, canAccess, isStaffRole } from '../../lib/admin/nav';
 import { AccessDenied } from './AccessDenied';
 
 /** Wrapper used for every non-content state so the page keeps one `<main>`. */
@@ -18,7 +18,7 @@ function GuardMain({ children }: { children: ReactNode }) {
 
 /**
  * Console route guard (DDP-#31 AC2). Anonymous visitors are sent to
- * `/login?next=<path>`; signed-in customers, sellers and riders get an
+ * `/admin/login?next=<path>`; signed-in customers, sellers and riders get an
  * access-denied message. Children (and therefore any admin data fetches)
  * only mount once the session is confirmed to belong to staff.
  */
@@ -30,7 +30,7 @@ export function RouteGuard({ children }: { children: ReactNode }) {
   const anonymous = !loading && !error && !user;
 
   useEffect(() => {
-    if (anonymous) router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+    if (anonymous) router.replace(`${ADMIN_LOGIN}?next=${encodeURIComponent(pathname)}`);
   }, [anonymous, pathname, router]);
 
   if (loading) {
@@ -64,7 +64,7 @@ export function RouteGuard({ children }: { children: ReactNode }) {
 
   const leave = async () => {
     await signOut();
-    router.replace('/login');
+    router.replace(ADMIN_LOGIN);
   };
 
   if (!isStaffRole(user.role)) {

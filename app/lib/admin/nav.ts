@@ -23,43 +23,52 @@ export interface NavItem {
   group: 'Operations' | 'Catalogue' | 'Customers' | 'Settings';
 }
 
+/** The console is served from `/admin` inside the storefront app. */
+export const ADMIN_HOME = '/admin';
+export const ADMIN_LOGIN = '/admin/login';
+
+/** Whether a pathname belongs to the console rather than the storefront. */
+export function isConsolePath(pathname: string): boolean {
+  return pathname === ADMIN_HOME || pathname.startsWith(`${ADMIN_HOME}/`);
+}
+
 const BOTH: readonly StaffRole[] = ['ADMIN', 'FULFILMENT_STAFF'];
 const ADMIN_ONLY: readonly StaffRole[] = ['ADMIN'];
 
 export const NAV_ITEMS: readonly NavItem[] = [
-  { href: '/', label: 'Dashboard', roles: BOTH, group: 'Operations' },
-  { href: '/orders', label: 'Orders', roles: BOTH, group: 'Operations' },
+  { href: ADMIN_HOME, label: 'Dashboard', roles: BOTH, group: 'Operations' },
+  { href: '/admin/orders', label: 'Orders', roles: BOTH, group: 'Operations' },
   {
-    href: '/fulfilment',
+    href: '/admin/fulfilment',
     label: 'Fulfilment queue',
     roles: BOTH,
     badge: 'openOrders',
     group: 'Operations',
   },
-  { href: '/deliveries', label: 'Delivery assignments', roles: BOTH, group: 'Operations' },
-  { href: '/riders', label: 'Riders', roles: BOTH, group: 'Operations' },
-  { href: '/products', label: 'Products & batches', roles: ADMIN_ONLY, group: 'Catalogue' },
-  { href: '/bundles', label: 'Gift bundles', roles: ADMIN_ONLY, group: 'Catalogue' },
+  { href: '/admin/deliveries', label: 'Delivery assignments', roles: BOTH, group: 'Operations' },
+  { href: '/admin/riders', label: 'Riders', roles: BOTH, group: 'Operations' },
+  { href: '/admin/products', label: 'Products & batches', roles: ADMIN_ONLY, group: 'Catalogue' },
+  { href: '/admin/bundles', label: 'Gift bundles', roles: ADMIN_ONLY, group: 'Catalogue' },
   {
-    href: '/sellers',
+    href: '/admin/sellers',
     label: 'Sellers',
     roles: ADMIN_ONLY,
     badge: 'pendingSellers',
     group: 'Catalogue',
   },
   {
-    href: '/refund-requests',
+    href: '/admin/refund-requests',
     label: 'Refund requests',
     roles: ADMIN_ONLY,
     badge: 'refundRequests',
     group: 'Customers',
   },
-  { href: '/subscriptions', label: 'Subscriptions', roles: ADMIN_ONLY, group: 'Customers' },
-  { href: '/reviews', label: 'Review moderation', roles: ADMIN_ONLY, group: 'Customers' },
-  { href: '/support', label: 'Support tickets', roles: ADMIN_ONLY, group: 'Customers' },
-  { href: '/promo-codes', label: 'Promo codes', roles: ADMIN_ONLY, group: 'Settings' },
-  { href: '/shipping-rates', label: 'Shipping rates', roles: ADMIN_ONLY, group: 'Settings' },
-  { href: '/staff', label: 'Staff accounts', roles: ADMIN_ONLY, group: 'Settings' },
+  { href: '/admin/subscriptions', label: 'Subscriptions', roles: ADMIN_ONLY, group: 'Customers' },
+  { href: '/admin/reviews', label: 'Review moderation', roles: ADMIN_ONLY, group: 'Customers' },
+  { href: '/admin/support', label: 'Support tickets', roles: ADMIN_ONLY, group: 'Customers' },
+  { href: '/admin/promo-codes', label: 'Promo codes', roles: ADMIN_ONLY, group: 'Settings' },
+  { href: '/admin/shipping-rates', label: 'Shipping rates', roles: ADMIN_ONLY, group: 'Settings' },
+  { href: '/admin/staff', label: 'Staff accounts', roles: ADMIN_ONLY, group: 'Settings' },
 ];
 
 export const NAV_GROUPS: readonly NavItem['group'][] = [
@@ -77,8 +86,8 @@ export function navForRole(role: string | null | undefined): NavItem[] {
 /** Finds the nav entry that owns a pathname (longest matching prefix). */
 export function navItemFor(pathname: string): NavItem | undefined {
   return NAV_ITEMS.filter((item) =>
-    item.href === '/'
-      ? pathname === '/'
+    item.href === ADMIN_HOME
+      ? pathname === ADMIN_HOME
       : pathname === item.href || pathname.startsWith(`${item.href}/`),
   ).sort((a, b) => b.href.length - a.href.length)[0];
 }
@@ -92,5 +101,7 @@ export function canAccess(pathname: string, role: string | null | undefined): bo
 }
 
 export function isActive(pathname: string, href: string): boolean {
-  return href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`);
+  return href === ADMIN_HOME
+    ? pathname === ADMIN_HOME
+    : pathname === href || pathname.startsWith(`${href}/`);
 }

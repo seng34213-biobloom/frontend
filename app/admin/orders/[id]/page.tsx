@@ -186,7 +186,7 @@ export default function OrderDetailPage() {
           ) : (
             <p>
               Not assigned yet. Use the{' '}
-              <Link href="/fulfilment" className="underline">
+              <Link href="/admin/fulfilment" className="underline">
                 fulfilment queue
               </Link>
               .
@@ -254,7 +254,7 @@ export default function OrderDetailPage() {
         {o.refundRequests.map((r) => (
           <li key={r.id}>
             {fmtMoney(r.amount)} · <StatusBadge status={r.status} /> · {r.reason}{' '}
-            <Link href="/refund-requests" className="underline">
+            <Link href="/admin/refund-requests" className="underline">
               Review
             </Link>
           </li>
